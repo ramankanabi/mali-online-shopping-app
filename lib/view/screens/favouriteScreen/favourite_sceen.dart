@@ -69,7 +69,7 @@ class _FavouriteScreenState extends State<FavouriteScreen>
         appBar: AppBar(
           centerTitle: false,
           title: Text(
-            "Favourite",
+            "My Favourite",
             style: getMediumStyle(
                 color: ColorManager.primary, fontSize: FontSize.s20),
           ),

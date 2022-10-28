@@ -97,12 +97,17 @@ class _CategoryScreenState extends State<CategoryScreen>
             shrinkWrap: true, // You won't see infinite size error
             itemCount: productData.length,
             itemBuilder: (context, index) {
-              return ProductItemWidget(
-                productName: productData[index].name,
-                prodId: productData[index].prodId,
-                price: productData[index].price,
-                imagePath: productData[index].images[0],
-              );
+              return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                          spreadRadius: 1.5,
+                          blurRadius: 10,
+                          color: Colors.grey.shade300),
+                    ],
+                  ),
+                  child: ProductItemWidget(productData: productData[index]));
             },
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,

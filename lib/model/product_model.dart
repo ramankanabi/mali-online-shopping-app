@@ -7,7 +7,7 @@ class Product {
   final List<dynamic>? relatedProduct;
   final String? discreption_EN;
   final String? discreption_KU;
-  final int? priceDiscont;
+  final int? priceDiscount;
   final List<dynamic> images;
   final bool? isAvailable;
   final int? deliveryPrice;
@@ -23,7 +23,7 @@ class Product {
     this.relatedProduct,
     this.discreption_EN,
     this.discreption_KU,
-    this.priceDiscont,
+    this.priceDiscount,
     required this.images,
     this.isAvailable,
     this.deliveryPrice,
@@ -40,6 +40,7 @@ class Product {
         relatedProduct: extractedData["relatedProduct"],
         discreption_EN: extractedData["description_en"],
         images: extractedData["images"],
-        isAvailable: extractedData["isAvailable"]);
+        isAvailable: extractedData["isAvailable"],
+        priceDiscount: extractedData["priceDiscount"]);
   }
 }

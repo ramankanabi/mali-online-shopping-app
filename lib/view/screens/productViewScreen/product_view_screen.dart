@@ -224,11 +224,70 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
             ),
           ],
         ),
-        Text(
-          "${product.price} IQD",
-          style:
-              getBoldStyle(color: ColorManager.orange, fontSize: FontSize.s20),
-        )
+        if (product.priceDiscount == 0) ...{
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: product.price.toString(),
+                  style: getBoldStyle(
+                      color: ColorManager.orange, fontSize: FontSize.s20),
+                ),
+                TextSpan(
+                  text: " IQD",
+                  style: getBoldStyle(
+                      color: ColorManager.orange, fontSize: FontSize.s16),
+                ),
+              ],
+            ),
+          ),
+        } else ...{
+          Row(
+            children: [
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: product.price.toString(),
+                      style: TextStyle(
+                        fontSize: FontSize.s16,
+                        fontWeight: FontWeight.normal,
+                        color: ColorManager.lightGrey,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: Colors.grey,
+                      ),
+                    ),
+                    TextSpan(
+                      text: " IQD",
+                      style: getBoldStyle(
+                          color: ColorManager.lightGrey,
+                          fontSize: FontSize.s12),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: product.priceDiscount.toString(),
+                      style: getBoldStyle(
+                          color: ColorManager.orange, fontSize: FontSize.s20),
+                    ),
+                    TextSpan(
+                      text: " IQD",
+                      style: getBoldStyle(
+                          color: ColorManager.orange, fontSize: FontSize.s16),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        }
       ],
     );
   }

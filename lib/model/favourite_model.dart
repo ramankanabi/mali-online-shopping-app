@@ -2,7 +2,7 @@ class Favourite {
   final String name;
   final String prodId;
   final int price;
-  final int? priceDiscont;
+  final int? priceDiscount;
   final List<dynamic> images;
   final bool isAvailable;
   final List size;
@@ -12,7 +12,7 @@ class Favourite {
     required this.name,
     required this.prodId,
     required this.price,
-    required this.priceDiscont,
+    required this.priceDiscount,
     required this.images,
     required this.isAvailable,
     required this.quantity,
@@ -28,7 +28,7 @@ class Favourite {
       isAvailable: extractedData["product"][0]["isAvailable"],
       size: extractedData["product"][0]["size"],
       quantity: extractedData["product"][0]["quantity"],
-      priceDiscont: extractedData["product"][0]["priceDiscount"],
+      priceDiscount: extractedData["product"][0]["priceDiscount"],
     );
   }
 }

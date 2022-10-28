@@ -7,6 +7,7 @@ import 'package:online_shopping/controller/favouite_contoller.dart';
 import 'package:online_shopping/resources/routes_manager.dart';
 import 'package:online_shopping/widgets/loader-shimmer-widgets/product_item_loader.dart';
 import 'package:provider/provider.dart';
+import '../model/product_model.dart';
 import '../resources/color_manager.dart';
 import '../resources/font_manager.dart';
 import '../resources/style_manager.dart';
@@ -14,17 +15,9 @@ import '../resources/values_manager.dart';
 import "package:http/http.dart" as http;
 
 class ProductItemWidget extends StatefulWidget {
-  final String productName;
-  final String prodId;
-  final int price;
-  final String imagePath;
-  const ProductItemWidget({
-    super.key,
-    required this.prodId,
-    required this.productName,
-    required this.price,
-    required this.imagePath,
-  });
+  final Product productData;
+
+  ProductItemWidget({super.key, required this.productData});
 
   @override
   State<ProductItemWidget> createState() => _ProductItemWidgetState();
@@ -34,7 +27,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
     with AutomaticKeepAliveClientMixin {
   bool _isFav = false;
   bool isInit = true;
-  // late Future _future;
+  late Product product;
   bool isLoading = false;
   bool get isFav {
     return _isFav;
@@ -42,6 +35,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
 
   @override
   initState() {
+    product = widget.productData;
     final isLogged =
         Provider.of<AuthController>(context, listen: false).isLogged;
 
@@ -58,7 +52,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
       isLoading = true;
     });
     final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$globalUserId/product/${widget.prodId}";
+        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$globalUserId/product/${product.prodId}";
     try {
       final fav = await http.get(
         Uri.parse(url),
@@ -96,7 +90,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
               onTap: () async {
                 final favStatus = await Navigator.pushNamed(
                     context, Routes.productViewScreen,
-                    arguments: [widget.prodId, isFav]);
+                    arguments: [product.prodId, isFav]);
                 setState(() {
                   _isFav = favStatus.toString() == "true";
                 });
@@ -107,12 +101,23 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
                     decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(
-                            widget.imagePath,
+                            product.images[0],
                           ),
                           fit: BoxFit.cover),
                     ),
                     child: Stack(
                       children: [
+                        if (product.priceDiscount != 0) ...{
+                          Banner(
+                            message: "discount",
+                            location: BannerLocation.topStart,
+                            color: ColorManager.primaryOpacity70,
+                            textStyle: getBoldStyle(
+                              color: Colors.white,
+                              fontSize: FontSize.s10,
+                            ),
+                          ),
+                        },
                         Positioned(
                             right: 5, top: 5, child: FavIconButton(isLogged)),
                         Positioned(bottom: 0, child: Footer(bxcst))
@@ -138,9 +143,9 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
           });
           isFav == true
               ? await Provider.of<FavouriteContoller>(context, listen: false)
-                  .addToFavourite(widget.prodId, globalUserId)
+                  .addToFavourite(product.prodId, globalUserId)
               : await Provider.of<FavouriteContoller>(context, listen: false)
-                  .removeFavourite(widget.prodId, globalUserId);
+                  .removeFavourite(product.prodId, globalUserId);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -177,7 +182,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.productName,
+              product.name,
               style: getBoldStyle(
                   color: ColorManager.grey, fontSize: FontSize.s16),
             ),
@@ -188,11 +193,72 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
-            Text(
-              "${widget.price} IQD",
-              style: getBoldStyle(
-                  color: ColorManager.orange, fontSize: FontSize.s16),
-            ),
+            if (product.priceDiscount == 0) ...{
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: product.price.toString(),
+                      style: getBoldStyle(
+                          color: ColorManager.orange, fontSize: FontSize.s16),
+                    ),
+                    TextSpan(
+                      text: " IQD",
+                      style: getBoldStyle(
+                          color: ColorManager.orange, fontSize: FontSize.s10),
+                    ),
+                  ],
+                ),
+              ),
+            } else ...{
+              Row(
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: product.price.toString(),
+                          style: TextStyle(
+                            fontSize: FontSize.s12,
+                            fontWeight: FontWeight.normal,
+                            color: ColorManager.lightGrey,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.grey,
+                          ),
+                        ),
+                        TextSpan(
+                          text: " IQD",
+                          style: getBoldStyle(
+                              color: ColorManager.lightGrey,
+                              fontSize: FontSize.s8),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: product.priceDiscount.toString(),
+                          style: getBoldStyle(
+                              color: ColorManager.orange,
+                              fontSize: FontSize.s16),
+                        ),
+                        TextSpan(
+                          text: " IQD",
+                          style: getBoldStyle(
+                              color: ColorManager.orange,
+                              fontSize: FontSize.s10),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            }
           ],
         ),
       ),

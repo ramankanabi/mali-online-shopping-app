@@ -41,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen>
       if (gridViewController.position.extentAfter < 300) {
         if (isInit == true) {
           isInit = false;
-          print("ramannnnn");
           Provider.of<ProductContoller>(context, listen: false)
               .loadMore()
               .then((_) {
@@ -91,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen>
                   controller: gridViewController,
                   children: [
                     const SizedBox(
-                      height: AppSize.s60,
+                      height: AppSize.s20,
                     ),
                     Text(
                       "Mali",
@@ -314,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget GridViewProduct(List productData) {
+  Widget GridViewProduct(List<Product> productData) {
     return GridView.builder(
       physics:
           const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
@@ -332,10 +331,7 @@ class _HomeScreenState extends State<HomeScreen>
             ],
           ),
           child: ProductItemWidget(
-            productName: productData[index].name,
-            prodId: productData[index].prodId,
-            price: productData[index].price,
-            imagePath: productData[index].images[0],
+            productData: productData[index],
           ),
         );
       },
