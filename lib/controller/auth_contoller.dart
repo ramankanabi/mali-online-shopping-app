@@ -13,7 +13,9 @@ class AuthController with ChangeNotifier {
   late String _token;
   String? _verificationCode;
   bool? isUserExist;
-  final storage = new FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   late String _userId;
   bool _isLogged = false;
@@ -71,6 +73,8 @@ class AuthController with ChangeNotifier {
             key: "userId", value: extractedData["data"]["user"]["_id"]);
         _userId = extractedData["data"]["user"]["_id"];
         _token = extractedData["token"];
+        globalToken = _token;
+        globalUserId = _userId;
         if (_token != null && _userId != null) {
           _isLogged = true;
         } else {
@@ -118,6 +122,8 @@ class AuthController with ChangeNotifier {
 
   Future<void> checkCode(String smsCodeContoller, User user) async {
     try {
+      _isLoading = true;
+      notifyListeners();
       final firebaseAuth =
           await auth.FirebaseAuth.instance.signInWithCredential(
         auth.PhoneAuthProvider.credential(
@@ -133,6 +139,8 @@ class AuthController with ChangeNotifier {
           }
         });
       }
+      _isLoading = false;
+      notifyListeners();
     } catch (e) {
       print(e);
       throw e;
@@ -190,9 +198,14 @@ class AuthController with ChangeNotifier {
   }
 
   Future<void> logOut() async {
+    _isLoading = true;
+    notifyListeners();
     await storage.delete(key: "jwt");
     await storage.delete(key: "userId");
+    globalToken = "";
+    globalUserId = "";
     _isLogged = false;
+    _isLoading = false;
 
     notifyListeners();
   }

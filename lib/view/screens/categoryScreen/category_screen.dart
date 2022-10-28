@@ -4,8 +4,8 @@ import 'package:online_shopping/resources/color_manager.dart';
 import 'package:online_shopping/resources/values_manager.dart';
 import 'package:online_shopping/widgets/loader-shimmer-widgets/loader.dart';
 import 'package:provider/provider.dart';
-import '../../model/product_model.dart';
-import '../../widgets/product_item_widget.dart';
+import '../../../model/product_model.dart';
+import '../../../widgets/product_item_widget.dart';
 
 class CategoryScreen extends StatefulWidget {
   final String categoryName;

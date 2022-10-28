@@ -10,9 +10,9 @@ import 'package:online_shopping/widgets/loader-shimmer-widgets/loader.dart';
 import 'package:online_shopping/widgets/slide_dots.dart';
 import 'package:online_shopping/widgets/time_countdown_widget.dart';
 import 'package:provider/provider.dart';
-import '../../model/product_model.dart';
-import '../../resources/routes_manager.dart';
-import '../../widgets/product_item_widget.dart';
+import '../../../model/product_model.dart';
+import '../../../resources/routes_manager.dart';
+import '../../../widgets/product_item_widget.dart';
 import '/resources/style_manager.dart';
 import 'package:lottie/lottie.dart';
 
@@ -41,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen>
       if (gridViewController.position.extentAfter < 300) {
         if (isInit == true) {
           isInit = false;
-          await Provider.of<ProductContoller>(context, listen: false)
+          print("ramannnnn");
+          Provider.of<ProductContoller>(context, listen: false)
               .loadMore()
               .then((_) {
             isInit = true;
@@ -83,63 +84,62 @@ class _HomeScreenState extends State<HomeScreen>
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Loader();
             } else {
-              return SingleChildScrollView(
-                controller: gridViewController,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppPadding.p14),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: AppSize.s60,
-                      ),
-                      Text(
-                        "Mali",
-                        style: getTextStyle(
-                            FontSize.s60,
-                            FontConstants.fontFamily,
-                            FontWeightManager.bold,
-                            ColorManager.primary),
-                      ),
-                      const SizedBox(
-                        height: AppSize.s20,
-                      ),
-                      AdvertiseView(),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      SearchBar(),
-                      const SizedBox(
-                        height: AppSize.s40,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: AppSize.s150,
-                        child: Categories(),
-                      ),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        child: Text("Most popular",
-                            style: getBoldStyle(
-                                color: ColorManager.primary,
-                                fontSize: FontSize.s20)),
-                      ),
-                      isLoading
-                          ? Center(
-                              child: CircularProgressIndicator(
+              return Padding(
+                padding: const EdgeInsets.all(AppPadding.p14),
+                child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  controller: gridViewController,
+                  children: [
+                    const SizedBox(
+                      height: AppSize.s60,
+                    ),
+                    Text(
+                      "Mali",
+                      style: getTextStyle(
+                          FontSize.s60,
+                          FontConstants.fontFamily,
+                          FontWeightManager.bold,
+                          ColorManager.primary),
+                    ),
+                    const SizedBox(
+                      height: AppSize.s20,
+                    ),
+                    AdvertiseView(),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    SearchBar(),
+                    const SizedBox(
+                      height: AppSize.s40,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: AppSize.s150,
+                      child: Categories(),
+                    ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      child: Text("Most popular",
+                          style: getBoldStyle(
+                              color: ColorManager.primary,
+                              fontSize: FontSize.s20)),
+                    ),
+                    isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                            color: ColorManager.orange,
+                          ))
+                        : GridViewProduct(prodactData),
+                    isLoadMore
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1,
                               color: ColorManager.orange,
-                            ))
-                          : GridViewProduct(prodactData),
-                      isLoadMore
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CircularProgressIndicator(
-                                strokeWidth: 1,
-                                color: ColorManager.orange,
-                              ),
-                            )
-                          : Container(),
-                    ],
-                  ),
+                            ),
+                          )
+                        : Container(),
+                  ],
                 ),
               );
             }
@@ -300,6 +300,7 @@ class _HomeScreenState extends State<HomeScreen>
         SizedBox(
           height: AppSize.s110,
           child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               itemCount: categoryData.length,
               itemBuilder: (context, index) {

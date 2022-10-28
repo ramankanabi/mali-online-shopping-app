@@ -8,13 +8,10 @@ import 'package:online_shopping/model/favourite_model.dart';
 class FavouriteContoller with ChangeNotifier {
   bool _isFav = false;
   List<Favourite> _favItems = [];
-  int _productFavCount = 0;
+  bool _iasLoaing = false;
+  bool get isLoading => _iasLoaing;
   List<Favourite> get favItems {
     return _favItems;
-  }
-
-  int get productFavCount {
-    return _productFavCount;
   }
 
   bool get isFav {
@@ -86,25 +83,35 @@ class FavouriteContoller with ChangeNotifier {
   }
 
   Future getUserAllFavourites(String userId) async {
-    final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
+    try {
+      _iasLoaing = true;
+      final url =
+          "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
 
-    final favs = await http.get(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json',
-        "Authorization": "Bearer $globalToken"
-      },
-    );
-    _favItems = [];
-    final extractedData = jsonDecode(favs.body)["data"]["data"] as List;
+      final favs = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+          "Authorization": "Bearer $globalToken"
+        },
+      );
+      if (favs.statusCode != 404) {
+        final extractedData = jsonDecode(favs.body)["data"]["data"] as List;
 
-    _favItems =
-        extractedData.map((prodData) => Favourite.fromJson(prodData)).toList();
+        _favItems = extractedData
+            .map((prodData) => Favourite.fromJson(prodData))
+            .toList();
+        _iasLoaing = false;
+        notifyListeners();
+      }
 
-    notifyListeners();
-    return favs;
+      return favs;
+    } catch (er) {
+      _iasLoaing = false;
+      notifyListeners();
+      print(er);
+    }
   }
 
   resetItems() {

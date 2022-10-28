@@ -12,10 +12,10 @@ import 'package:online_shopping/widgets/loader-shimmer-widgets/product_view_page
 import 'package:online_shopping/widgets/slide_dots.dart';
 import 'package:provider/provider.dart';
 
-import '../../controller/auth_contoller.dart';
-import '../../controller/favouite_contoller.dart';
-import '../../model/product_model.dart';
-import '../../widgets/show_bottom_modal_sheet.dart';
+import '../../../controller/auth_contoller.dart';
+import '../../../controller/favouite_contoller.dart';
+import '../../../model/product_model.dart';
+import '../../../widgets/show_bottom_modal_sheet.dart';
 
 class ProductViewScreen extends StatefulWidget {
   const ProductViewScreen(
@@ -39,7 +39,13 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
 
   @override
   void initState() {
-    toggleFavStatus();
+    final isLogged =
+        Provider.of<AuthController>(context, listen: false).isLogged;
+    if (isLogged) {
+      toggleFavStatus();
+    } else {
+      isFav = false;
+    }
     _future = Provider.of<ProductContoller>(context, listen: false)
         .fetchOneProduct(widget.productId);
     super.initState();
@@ -83,6 +89,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLogged = Provider.of<AuthController>(context).isLogged;
     return WillPopScope(
       onWillPop: () async {
         Navigator.pop(context, isFav);
@@ -110,7 +117,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                                 ImageCover(
                                   _product,
                                 ),
-                                NamePriceFav(_product),
+                                NamePriceFav(_product, isLogged),
                                 SizedBox(
                                   height: AppSize.s70,
                                   width: double.infinity,
@@ -163,14 +170,14 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                           ),
                         ),
               persistentFooterButtons: [
-                Footer(_product),
+                Footer(_product, isLogged),
               ],
             );
           }),
     );
   }
 
-  Widget NamePriceFav(Product product) {
+  Widget NamePriceFav(Product product, bool isLogged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -191,17 +198,25 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                     size: 30,
                   ),
                   onPressed: () async {
-                    setState(() {
-                      isFav = !isFav;
-                    });
-                    if (isFav == true) {
-                      await Provider.of<FavouriteContoller>(context,
-                              listen: false)
-                          .addToFavourite(product.prodId, globalUserId);
+                    if (isLogged) {
+                      setState(() {
+                        isFav = !isFav;
+                      });
+                      if (isFav == true) {
+                        await Provider.of<FavouriteContoller>(context,
+                                listen: false)
+                            .addToFavourite(product.prodId, globalUserId);
+                      } else {
+                        await Provider.of<FavouriteContoller>(context,
+                                listen: false)
+                            .removeFavourite(product.prodId, globalUserId);
+                      }
                     } else {
-                      await Provider.of<FavouriteContoller>(context,
-                              listen: false)
-                          .removeFavourite(product.prodId, globalUserId);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Should Log in :)"),
+                        ),
+                      );
                     }
                   },
                 ),
@@ -392,9 +407,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  Widget Footer(Product product) {
-// MediaQuery.of(context).size.height.
-
+  Widget Footer(Product product, bool isLoggedd) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -402,16 +415,24 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
             padding: const EdgeInsets.all(AppPadding.p5),
             child: ElevatedButton(
               onPressed: () {
-                if (product != null) {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    barrierColor: Colors.black87,
-                    builder: (context) => SizedBox(
-                      height: MediaQuery.of(context).size.height / 2,
-                      child: ShowModalBottomSheet(
-                        product: product,
+                if (isLoggedd) {
+                  if (product != null) {
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      barrierColor: Colors.black87,
+                      builder: (context) => SizedBox(
+                        height: MediaQuery.of(context).size.height / 2,
+                        child: ShowModalBottomSheet(
+                          product: product,
+                        ),
                       ),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Should Log in :)"),
                     ),
                   );
                 }

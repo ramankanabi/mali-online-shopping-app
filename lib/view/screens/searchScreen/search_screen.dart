@@ -6,13 +6,13 @@ import 'package:online_shopping/resources/color_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../resources/font_manager.dart';
-import '../../resources/routes_manager.dart';
-import '../../resources/style_manager.dart';
-import '../../resources/values_manager.dart';
+import '../../../resources/font_manager.dart';
+import '../../../resources/routes_manager.dart';
+import '../../../resources/style_manager.dart';
+import '../../../resources/values_manager.dart';
 
 class SearchScreen extends StatefulWidget {
-  SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();

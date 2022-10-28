@@ -12,7 +12,6 @@ import '../resources/font_manager.dart';
 import '../resources/style_manager.dart';
 import '../resources/values_manager.dart';
 import "package:http/http.dart" as http;
-import 'package:shimmer/shimmer.dart';
 
 class ProductItemWidget extends StatefulWidget {
   final String productName;
@@ -43,10 +42,14 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
 
   @override
   initState() {
-    // _future = Provider.of<FavouriteContoller>(context, listen: false)
-    //     .getFavourite(widget.prodId, globalUserId);
-    toggleFavStatus();
-    // TODO: implement initState
+    final isLogged =
+        Provider.of<AuthController>(context, listen: false).isLogged;
+
+    if (isLogged) {
+      toggleFavStatus();
+    } else {
+      _isFav = false;
+    }
     super.initState();
   }
 
@@ -82,6 +85,9 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
 
   @override
   Widget build(BuildContext context) {
+    final isLogged =
+        Provider.of<AuthController>(context, listen: true).isLogged;
+
     return isLoading
         ? const Center(child: ProductItemLoader())
         : ClipRRect(
@@ -107,7 +113,8 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
                     ),
                     child: Stack(
                       children: [
-                        Positioned(right: 5, top: 5, child: FavIconButton()),
+                        Positioned(
+                            right: 5, top: 5, child: FavIconButton(isLogged)),
                         Positioned(bottom: 0, child: Footer(bxcst))
                       ],
                     ),
@@ -122,17 +129,25 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
-  Widget FavIconButton() {
+  Widget FavIconButton(bool isLogged) {
     return InkWell(
       onTap: () async {
-        setState(() {
-          _isFav = !_isFav;
-        });
-        isFav == true
-            ? await Provider.of<FavouriteContoller>(context, listen: false)
-                .addToFavourite(widget.prodId, globalUserId)
-            : await Provider.of<FavouriteContoller>(context, listen: false)
-                .removeFavourite(widget.prodId, globalUserId);
+        if (isLogged) {
+          setState(() {
+            _isFav = !_isFav;
+          });
+          isFav == true
+              ? await Provider.of<FavouriteContoller>(context, listen: false)
+                  .addToFavourite(widget.prodId, globalUserId)
+              : await Provider.of<FavouriteContoller>(context, listen: false)
+                  .removeFavourite(widget.prodId, globalUserId);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Should Log in :)"),
+            ),
+          );
+        }
       },
       child: Card(
         shape: const CircleBorder(),

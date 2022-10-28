@@ -5,12 +5,12 @@ import 'package:online_shopping/controller/cart_controller.dart';
 import 'package:online_shopping/resources/values_manager.dart';
 import 'package:online_shopping/widgets/loader-shimmer-widgets/loader.dart';
 import 'package:provider/provider.dart';
-import '../../model/cart_model.dart';
-import '../../resources/color_manager.dart';
-import '../../resources/font_manager.dart';
-import '../../resources/routes_manager.dart';
-import '../../resources/style_manager.dart';
-import '../../widgets/cart_item_widget.dart';
+import '../../../model/cart_model.dart';
+import '../../../resources/color_manager.dart';
+import '../../../resources/font_manager.dart';
+import '../../../resources/routes_manager.dart';
+import '../../../resources/style_manager.dart';
+import '../../../widgets/cart_item_widget.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);

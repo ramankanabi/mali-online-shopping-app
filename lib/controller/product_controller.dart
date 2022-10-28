@@ -7,7 +7,7 @@ import 'package:online_shopping/model/product_model.dart';
 class ProductContoller with ChangeNotifier {
   int _page = 1;
   int _categoryPage = 1;
-  final int _limit = 8;
+  final int _limit = 26;
 
   List<Product> _items = [];
   List<Product> get items => _items;
@@ -77,7 +77,7 @@ class ProductContoller with ChangeNotifier {
     try {
       _page++;
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=${_page}&limit=$_limit";
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit";
 
       final response = await http.get(Uri.parse(url));
       final extractedData = jsonDecode(response.body)["data"] as List;

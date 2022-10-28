@@ -10,9 +10,9 @@ import 'package:online_shopping/widgets/loader-shimmer-widgets/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-import '../../model/oder_model.dart';
-import '../../resources/values_manager.dart';
-import '../../widgets/slide_dots.dart';
+import '../../../model/oder_model.dart';
+import '../../../resources/values_manager.dart';
+import '../../../widgets/slide_dots.dart';
 
 class OrderScreen extends StatefulWidget {
   OrderScreen({Key? key}) : super(key: key);

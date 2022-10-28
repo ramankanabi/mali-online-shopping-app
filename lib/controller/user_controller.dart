@@ -6,13 +6,16 @@ import 'package:online_shopping/model/user_model.dart';
 
 class UserController with ChangeNotifier {
   User _user = User(name: "", phoneNumber: "", city: "", birthYear: 0);
+  bool _isLoading = false;
 
+  bool get isLoading => _isLoading;
   User get user {
     return _user;
   }
 
   Future<void> getUserData(String userId) async {
     try {
+      _isLoading = true;
       final url =
           "https://gentle-crag-94785.herokuapp.com/api/v1/user/id/$userId";
       final user = await http.get(Uri.parse(url));
@@ -25,6 +28,7 @@ class UserController with ChangeNotifier {
     } catch (er) {
       print(er);
     }
+    _isLoading = false;
     notifyListeners();
   }
 }

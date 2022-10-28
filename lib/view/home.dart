@@ -5,10 +5,10 @@ import 'package:online_shopping/controller/auth_contoller.dart';
 import 'package:online_shopping/controller/cart_controller.dart';
 import 'package:online_shopping/resources/color_manager.dart';
 import 'package:online_shopping/resources/values_manager.dart';
-import 'package:online_shopping/view/screens/cart_screen.dart';
-import 'package:online_shopping/view/screens/favourite_sceen.dart';
-import 'package:online_shopping/view/screens/home_screen.dart';
-import 'package:online_shopping/view/screens/profile_screen.dart';
+import 'package:online_shopping/view/screens/cartScreen/cart_screen.dart';
+import 'package:online_shopping/view/screens/favouriteScreen/favourite_sceen.dart';
+import 'package:online_shopping/view/screens/homeScreen/home_screen.dart';
+import 'package:online_shopping/view/screens/profileScreen/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../resources/routes_manager.dart';
@@ -54,6 +54,7 @@ class _HomeState extends State<Home> {
       backgroundColor: ColorManager.white,
       body: Stack(children: [
         PageView(
+          physics: const NeverScrollableScrollPhysics(),
           controller: pageController,
           onPageChanged: onPageChanged,
           children: [

@@ -13,16 +13,16 @@
 import 'package:flutter/material.dart';
 import 'package:online_shopping/model/favourite_model.dart';
 import 'package:online_shopping/resources/strings_manager.dart';
-import 'package:online_shopping/view/screens/auth_screen.dart';
-import 'package:online_shopping/view/screens/cart_screen.dart';
-import 'package:online_shopping/view/screens/category_screen.dart';
-import 'package:online_shopping/view/screens/favourite_sceen.dart';
-import 'package:online_shopping/view/screens/form_submit_order.dart';
-import 'package:online_shopping/view/screens/home_screen.dart';
-import 'package:online_shopping/view/screens/order_screen.dart';
-import 'package:online_shopping/view/screens/product_view_screen.dart';
+import 'package:online_shopping/view/screens/authScreen/auth_screen.dart';
+import 'package:online_shopping/view/screens/cartScreen/cart_screen.dart';
+import 'package:online_shopping/view/screens/categoryScreen/category_screen.dart';
+import 'package:online_shopping/view/screens/favouriteScreen/favourite_sceen.dart';
+import 'package:online_shopping/view/screens/orderScreen/form_submit_order.dart';
+import 'package:online_shopping/view/screens/homeScreen/home_screen.dart';
+import 'package:online_shopping/view/screens/orderScreen/order_screen.dart';
+import 'package:online_shopping/view/screens/productViewScreen/product_view_screen.dart';
 
-import '../view/screens/search_screen.dart';
+import '../view/screens/searchScreen/search_screen.dart';
 
 class Routes {
   static const String splashRoute = "/";

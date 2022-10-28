@@ -5,10 +5,10 @@ import 'package:online_shopping/resources/style_manager.dart';
 import 'package:online_shopping/resources/values_manager.dart';
 import 'package:provider/provider.dart';
 
-import '../../controller/auth_contoller.dart';
-import '../../controller/order_controller.dart';
-import '../../model/cart_model.dart';
-import '../../resources/color_manager.dart';
+import '../../../controller/auth_contoller.dart';
+import '../../../controller/order_controller.dart';
+import '../../../model/cart_model.dart';
+import '../../../resources/color_manager.dart';
 
 class FormSubmitOrder extends StatefulWidget {
   const FormSubmitOrder({Key? key, required this.cart}) : super(key: key);

@@ -3,13 +3,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
+import 'package:online_shopping/controller/product_controller.dart';
 import 'package:online_shopping/model/user_model.dart';
 import 'package:online_shopping/resources/font_manager.dart';
 import 'package:online_shopping/resources/style_manager.dart';
 import 'package:online_shopping/resources/values_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:provider/provider.dart';
-import '../../resources/color_manager.dart';
+import '../../../controller/favouite_contoller.dart';
+import '../../../resources/color_manager.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key}) : super(key: key);
@@ -109,6 +111,25 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  _login() async {
+    await Provider.of<AuthController>(context, listen: false)
+        .checkCode(smsCodeContoller.text, user)
+        .then((_) {
+      Provider.of<ProductContoller>(context, listen: false).resetItem();
+      Provider.of<ProductContoller>(context, listen: false).fetchProductData();
+      Provider.of<FavouriteContoller>(context, listen: false).resetItems();
+      Provider.of<FavouriteContoller>(context, listen: false)
+          .getUserAllFavourites(globalUserId);
+      Navigator.pop(context);
+    }).catchError((er) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Oh, something went error"),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,7 +175,6 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  // ignore: non_constant_identifier_names
   Widget PhoneNumberField() {
     return Padding(
       padding: const EdgeInsets.all(AppPadding.p8),
@@ -539,10 +559,10 @@ class _AuthScreenState extends State<AuthScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text("00:" + counter.toString()),
+                          Text("00:$counter"),
                         ],
                       ),
                     ],
@@ -551,24 +571,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 Column(
                   children: [
                     ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        await Provider.of<AuthController>(context,
-                                listen: false)
-                            .checkCode(smsCodeContoller.text, user)
-                            .then((_) => Navigator.pop(context))
-                            .catchError((er) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(er.toString()),
-                            ),
-                          );
-                          setState(() {
-                            isLoading = false;
-                          });
-                        });
+                      onPressed: () {
+                        _login();
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
