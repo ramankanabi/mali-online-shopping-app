@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:online_shopping/controller/product_controller.dart';
 import 'package:online_shopping/resources/color_manager.dart';
 import 'package:online_shopping/resources/font_manager.dart';
@@ -16,14 +16,13 @@ import '../../../controller/auth_contoller.dart';
 import '../../../controller/favouite_contoller.dart';
 import '../../../model/product_model.dart';
 import '../../../widgets/show_bottom_modal_sheet.dart';
+import '../../../cacheManager/image_cache_manager.dart' as cache;
 
 class ProductViewScreen extends StatefulWidget {
-  const ProductViewScreen(
-      {required this.productId, required this.isFav, Key? key})
+  const ProductViewScreen({required this.productId, Key? key})
       : super(key: key);
 
   final String productId;
-  final bool isFav;
 
   @override
   State<ProductViewScreen> createState() => _ProductViewScreenState();
@@ -55,26 +54,10 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     setState(() {
       isLoading = true;
     });
-    final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$globalUserId/product/${widget.productId}";
     try {
-      final fav = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json',
-          "Authorization": "Bearer $globalToken"
-        },
-      );
-      if (fav.statusCode != 404) {
-        setState(() {
-          isFav = true;
-        });
-      } else {
-        setState(() {
-          isFav = false;
-        });
-      }
+      isFav = await FavouriteContoller()
+          .getFavourite(widget.productId, globalUserId);
+
       setState(() {
         isLoading = false;
       });
@@ -307,7 +290,8 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
               height: AppSize.s400,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(product.images[index]),
+                  image: CachedNetworkImageProvider(product.images[index],
+                      cacheManager: cache.ImageCacheManager().cacheManager),
                   fit: BoxFit.cover,
                 ),
               ),

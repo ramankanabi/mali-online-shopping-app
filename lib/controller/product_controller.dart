@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:online_shopping/apiService/dio_interceptors_wrapper.dart';
+import 'package:online_shopping/apiService/dio_options.dart';
 import 'package:online_shopping/model/product_model.dart';
+import "package:dio/dio.dart";
 
 class ProductContoller with ChangeNotifier {
   int _page = 1;
   int _categoryPage = 1;
-  final int _limit = 26;
+  int _advertisePage = 1;
+  final int _limit = 4;
 
   List<Product> _items = [];
   List<Product> get items => _items;
@@ -17,17 +21,34 @@ class ProductContoller with ChangeNotifier {
 
   Product get product => _product;
 
-  List<Product> _categoryItems = [];
+  List<Product> _advertiseItems = [];
 
+  List<Product> get advertiseItems => _advertiseItems;
+
+  List<Product> _categoryItems = [];
   List<Product> get categoryItems => _categoryItems;
+
+  Options dioOptions = DioOptions().dioOptions;
+  Dio getDio() {
+    Dio dio = Dio();
+
+    dio.interceptors.addAll(
+      [
+        DioInterceptorsWrapper(),
+        DioOptions().dioCacheManager.interceptor,
+      ],
+    );
+    return dio;
+  }
 
   Future fetchProductData() async {
     try {
       _page = 1;
       final url =
           "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit";
-      final response = await http.get(Uri.parse(url));
-      final extractedData = jsonDecode(response.body)["data"] as List;
+
+      final response = await getDio().get(url, options: dioOptions);
+      final extractedData = response.data["data"] as List;
 
       _items =
           extractedData.map((prodData) => Product.fromJson(prodData)).toList();
@@ -38,12 +59,12 @@ class ProductContoller with ChangeNotifier {
     }
   }
 
-  Future<http.Response?> fetchOneProduct(String prodId) async {
+  Future<Response?> fetchOneProduct(String prodId) async {
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/products/$prodId";
     try {
-      final response = await http.get(Uri.parse(url));
-      final extractedData = jsonDecode(response.body)["data"]["data"];
+      final response = await getDio().get(url, options: dioOptions);
+      final extractedData = response.data["data"]["data"];
       _product = Product.fromJson(extractedData);
       notifyListeners();
 
@@ -54,23 +75,58 @@ class ProductContoller with ChangeNotifier {
     return null;
   }
 
-  // String curentCategory = '';
-  Future fetchCategoryProductData(String category) async {
-    // if (curentCategory != category) {
-    //   _categoryItems = [];
-    //   curentCategory = category;
-    // }
-    _categoryPage = 1;
+  Future fetchAdvertiseProductData() async {
+    _advertisePage = 1;
+    try {
+      final url =
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?priceDiscount[gt]=0&page=$_advertisePage&limit=$_limit";
+      final response = await getDio().get(url);
+      final extractedData = response.data["data"] as List;
 
-    final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/products?category=$category&page=$_categoryPage&limit=$_limit";
-    final response = await http.get(Uri.parse(url));
-    final extractedData = jsonDecode(response.body)["data"] as List;
+      _advertiseItems =
+          extractedData.map((prodData) => Product.fromJson(prodData)).toList();
+      notifyListeners();
+      return response;
+    } catch (er) {
+      print(er);
+    }
+  }
 
-    _categoryItems =
-        extractedData.map((prodData) => Product.fromJson(prodData)).toList();
+  Future advertiseloadMore() async {
+    try {
+      _advertisePage = _advertisePage + 1;
+
+      final url =
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?priceDiscount[gt]=0&page=$_advertisePage&limit=$_limit";
+
+      final response = await getDio().get(url, options: dioOptions);
+      final extractedData = jsonDecode(response.data)["data"] as List;
+      if (jsonDecode(response.data)["results"] != 0) {
+        _advertiseItems.addAll(extractedData
+            .map((prodData) => Product.fromJson(prodData))
+            .toList());
+      } else {}
+    } catch (er) {
+      print(er);
+    }
     notifyListeners();
-    return response;
+  }
+
+  Future fetchCategoryProductData(String category) async {
+    _categoryPage = 1;
+    try {
+      final url =
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?category=$category&page=$_categoryPage&limit=$_limit";
+      final response = await getDio().get(url);
+      final extractedData = response.data["data"] as List;
+
+      _categoryItems =
+          extractedData.map((prodData) => Product.fromJson(prodData)).toList();
+      notifyListeners();
+      return response;
+    } catch (er) {
+      print(er);
+    }
   }
 
   Future loadMore() async {
@@ -79,9 +135,9 @@ class ProductContoller with ChangeNotifier {
       final url =
           "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit";
 
-      final response = await http.get(Uri.parse(url));
-      final extractedData = jsonDecode(response.body)["data"] as List;
-      if (jsonDecode(response.body)["results"] != 0) {
+      final response = await getDio().get(url, options: dioOptions);
+      final extractedData = response.data["data"] as List;
+      if (response.data["results"] != 0) {
         _items.addAll(extractedData
             .map((prodData) => Product.fromJson(prodData))
             .toList());
@@ -99,9 +155,9 @@ class ProductContoller with ChangeNotifier {
       final url =
           "https://gentle-crag-94785.herokuapp.com/api/v1/products?category=$categoryName&page=${_categoryPage}&limit=$_limit";
 
-      final response = await http.get(Uri.parse(url));
-      final extractedData = jsonDecode(response.body)["data"] as List;
-      if (jsonDecode(response.body)["results"] != 0) {
+      final response = await getDio().get(url, options: dioOptions);
+      final extractedData = response.data["data"] as List;
+      if (response.data["results"] != 0) {
         _categoryItems.addAll(extractedData
             .map((prodData) => Product.fromJson(prodData))
             .toList());
@@ -112,13 +168,19 @@ class ProductContoller with ChangeNotifier {
     notifyListeners();
   }
 
-  Future resetCategoryProductItem() async {
+  resetCategoryProductItem() {
     _categoryItems.clear();
     notifyListeners();
   }
 
-  Future resetItem() async {
+  resetItem() {
+    getDio().interceptors.clear();
     _items.clear();
+    notifyListeners();
+  }
+
+  resetAdvertiseItem() {
+    _advertiseItems.clear();
     notifyListeners();
   }
 }

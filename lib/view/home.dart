@@ -1,16 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
-import 'package:online_shopping/controller/cart_controller.dart';
 import 'package:online_shopping/resources/color_manager.dart';
-import 'package:online_shopping/resources/values_manager.dart';
-import 'package:online_shopping/view/screens/cartScreen/cart_screen.dart';
 import 'package:online_shopping/view/screens/favouriteScreen/favourite_sceen.dart';
 import 'package:online_shopping/view/screens/homeScreen/home_screen.dart';
 import 'package:online_shopping/view/screens/profileScreen/profile_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../cacheManager/image_cache_manager.dart' as cache;
 import '../resources/routes_manager.dart';
 
 class Home extends StatefulWidget {
@@ -119,8 +118,9 @@ class _HomeState extends State<Home> {
                 color: ColorManager.white,
                 size: 30,
               ),
-              onPressed: () {
-                Navigator.pushNamed(context, Routes.cartScreen);
+              onPressed: () async {
+                await DefaultCacheManager().removeFile("productImages");
+                // Navigator.pushNamed(context, Routes.cartScreen);
               },
             ),
           ),

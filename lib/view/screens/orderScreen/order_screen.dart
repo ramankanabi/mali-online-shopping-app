@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -13,6 +14,7 @@ import 'package:intl/intl.dart';
 import '../../../model/oder_model.dart';
 import '../../../resources/values_manager.dart';
 import '../../../widgets/slide_dots.dart';
+import "../../../cacheManager/image_cache_manager.dart" as cache;
 
 class OrderScreen extends StatefulWidget {
   OrderScreen({Key? key}) : super(key: key);
@@ -126,9 +128,10 @@ class _OrderScreenState extends State<OrderScreen> {
                         width: 70,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: NetworkImage(
-                                orderData[i].images[0],
-                              ),
+                              image: CachedNetworkImageProvider(
+                                  orderData[i].images[0],
+                                  cacheManager:
+                                      cache.ImageCacheManager().cacheManager),
                               fit: BoxFit.cover),
                         ),
                       ),
@@ -237,7 +240,10 @@ class _OrderScreenState extends State<OrderScreen> {
                         height: AppSize.s100,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(orderData.images[i]),
+                            image: CachedNetworkImageProvider(
+                                orderData.images[i],
+                                cacheManager:
+                                    cache.ImageCacheManager().cacheManager),
                             fit: BoxFit.cover,
                           ),
                         ),

@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
 import 'package:online_shopping/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../apiService/dio_interceptors_wrapper.dart';
+import '../apiService/dio_options.dart';
 
 String globalToken = "";
 String globalUserId = "";
@@ -19,22 +23,33 @@ class AuthController with ChangeNotifier {
 
   late String _userId;
   bool _isLogged = false;
+
+  Options dioOptions = DioOptions().dioOptions;
+  Dio getDio() {
+    Dio dio = Dio();
+
+    dio.interceptors.addAll(
+      [
+        DioInterceptorsWrapper(),
+        DioOptions().dioCacheManager.interceptor,
+      ],
+    );
+    return dio;
+  }
+
   Future<void> _createUser(User user, String token) async {
     const url = "https://gentle-crag-94785.herokuapp.com/api/v1/user/signup";
 
     try {
-      final userCreated = await http.post(Uri.parse(url),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: json.encode({
+      final userCreated = await getDio().post(url,
+          data: json.encode({
             "token": token,
             "name": user.name,
             "phoneNumber": user.phoneNumber,
             "city": user.city,
             "birthYear": user.birthYear,
           }));
-      final extractedData = json.decode(userCreated.body);
+      final extractedData = userCreated.data;
       await storage.write(key: "jwt", value: extractedData["token"]);
       await storage.write(
           key: "userId", value: extractedData["data"]["user"]["_id"]);
@@ -59,15 +74,16 @@ class AuthController with ChangeNotifier {
     try {
       if (isUserExist == true) {
         const url = "https://gentle-crag-94785.herokuapp.com/api/v1/user/login";
-        final loggedUser = await http.post(Uri.parse(url),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode({
+        final loggedUser = await getDio().post(
+          url,
+          data: jsonEncode(
+            {
               "token": token,
               "phoneNumber": user.phoneNumber,
-            }));
-        final extractedData = json.decode(loggedUser.body);
+            },
+          ),
+        );
+        final extractedData = loggedUser.data;
         await storage.write(key: "jwt", value: extractedData["token"]);
         await storage.write(
             key: "userId", value: extractedData["data"]["user"]["_id"]);
@@ -148,17 +164,10 @@ class AuthController with ChangeNotifier {
   }
 
   Future<bool> checkUser(String phoneNumber) async {
-    late http.Response user;
-    late dynamic extracteData;
-    try {
-      user = await http.get(Uri.parse(
-          "https://gentle-crag-94785.herokuapp.com/api/v1/user/phone/$phoneNumber"));
-      extracteData = jsonDecode(user.body);
-    } catch (er) {
-      print(er);
-    }
+    final user = await getDio().get(
+        "https://gentle-crag-94785.herokuapp.com/api/v1/user/phone/$phoneNumber");
 
-    if (extracteData["data"]["user"] == null) {
+    if (user.data["data"]["user"] == null) {
       isUserExist = false;
       print("a user doesn't exist");
       return false;

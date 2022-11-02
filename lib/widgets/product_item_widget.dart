@@ -12,12 +12,13 @@ import '../resources/color_manager.dart';
 import '../resources/font_manager.dart';
 import '../resources/style_manager.dart';
 import '../resources/values_manager.dart';
-import "package:http/http.dart" as http;
+import 'package:cached_network_image/cached_network_image.dart';
+import "../cacheManager/image_cache_manager.dart" as cache;
 
 class ProductItemWidget extends StatefulWidget {
   final Product productData;
 
-  ProductItemWidget({super.key, required this.productData});
+  const ProductItemWidget({super.key, required this.productData});
 
   @override
   State<ProductItemWidget> createState() => _ProductItemWidgetState();
@@ -25,13 +26,11 @@ class ProductItemWidget extends StatefulWidget {
 
 class _ProductItemWidgetState extends State<ProductItemWidget>
     with AutomaticKeepAliveClientMixin {
-  bool _isFav = false;
+  bool isFav = false;
   bool isInit = true;
   late Product product;
   bool isLoading = false;
-  bool get isFav {
-    return _isFav;
-  }
+  bool isNetwork = true;
 
   @override
   initState() {
@@ -42,7 +41,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
     if (isLogged) {
       toggleFavStatus();
     } else {
-      _isFav = false;
+      isFav = false;
     }
     super.initState();
   }
@@ -51,26 +50,10 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
     setState(() {
       isLoading = true;
     });
-    final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$globalUserId/product/${product.prodId}";
     try {
-      final fav = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json',
-          "Authorization": "Bearer $globalToken"
-        },
-      );
-      if (fav.statusCode != 404) {
-        setState(() {
-          _isFav = true;
-        });
-      } else {
-        setState(() {
-          _isFav = false;
-        });
-      }
+      isFav =
+          await FavouriteContoller().getFavourite(product.prodId, globalUserId);
+
       setState(() {
         isLoading = false;
       });
@@ -90,39 +73,38 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
               onTap: () async {
                 final favStatus = await Navigator.pushNamed(
                     context, Routes.productViewScreen,
-                    arguments: [product.prodId, isFav]);
+                    arguments: [product.prodId]);
                 setState(() {
-                  _isFav = favStatus.toString() == "true";
+                  isFav = favStatus.toString() == "true";
                 });
               },
               child: LayoutBuilder(
                 builder: (context, bxcst) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage(
-                            product.images[0],
+                  return Stack(
+                    children: [
+                      CachedNetworkImage(
+                          imageUrl: product.images[0],
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                          fit: BoxFit.cover,
+                          width: bxcst.maxWidth,
+                          height: bxcst.maxHeight,
+                          cacheManager: cache.ImageCacheManager().cacheManager),
+                      if (product.priceDiscount != 0) ...{
+                        Banner(
+                          message: "discount",
+                          location: BannerLocation.topStart,
+                          color: ColorManager.primaryOpacity70,
+                          textStyle: getBoldStyle(
+                            color: Colors.white,
+                            fontSize: FontSize.s10,
                           ),
-                          fit: BoxFit.cover),
-                    ),
-                    child: Stack(
-                      children: [
-                        if (product.priceDiscount != 0) ...{
-                          Banner(
-                            message: "discount",
-                            location: BannerLocation.topStart,
-                            color: ColorManager.primaryOpacity70,
-                            textStyle: getBoldStyle(
-                              color: Colors.white,
-                              fontSize: FontSize.s10,
-                            ),
-                          ),
-                        },
-                        Positioned(
-                            right: 5, top: 5, child: FavIconButton(isLogged)),
-                        Positioned(bottom: 0, child: Footer(bxcst))
-                      ],
-                    ),
+                        ),
+                      },
+                      Positioned(
+                          right: 5, top: 5, child: FavIconButton(isLogged)),
+                      Positioned(bottom: 0, child: Footer(bxcst))
+                    ],
                   );
                 },
               ),
@@ -130,16 +112,12 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
           );
   }
 
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
-
   Widget FavIconButton(bool isLogged) {
     return InkWell(
       onTap: () async {
         if (isLogged) {
           setState(() {
-            _isFav = !_isFav;
+            isFav = !isFav;
           });
           isFav == true
               ? await Provider.of<FavouriteContoller>(context, listen: false)
@@ -264,4 +242,9 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAliv
+  // e
+  bool get wantKeepAlive => true;
 }

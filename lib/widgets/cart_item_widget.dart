@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/controller/cart_controller.dart';
@@ -10,9 +11,10 @@ import '../resources/color_manager.dart';
 import '../resources/font_manager.dart';
 import '../resources/routes_manager.dart';
 import '../resources/style_manager.dart';
+import '../cacheManager/image_cache_manager.dart' as cache;
 
 class CartItem extends StatefulWidget {
-  const CartItem({required this.cart});
+  const CartItem({super.key, required this.cart});
   final Cart cart;
   @override
   State<CartItem> createState() => _CartItemState();
@@ -73,10 +75,11 @@ class _CartItemState extends State<CartItem>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(children: [
-                                    Image.network(
-                                      cart.images[0],
-                                      fit: BoxFit.cover,
-                                    ),
+                                    CachedNetworkImage(
+                                        imageUrl: cart.images[0],
+                                        fit: BoxFit.cover,
+                                        cacheManager: cache.ImageCacheManager()
+                                            .cacheManager),
                                     const SizedBox(
                                       width: 10,
                                     ),
@@ -261,6 +264,5 @@ class _CartItemState extends State<CartItem>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

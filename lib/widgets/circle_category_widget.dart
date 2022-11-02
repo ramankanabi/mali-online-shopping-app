@@ -29,15 +29,12 @@ class CircleCategoryWidget extends StatelessWidget {
           children: [
             Card(
               elevation: 5,
-              // shadowColor: ColorManager.darkGrey,
               borderOnForeground: false,
               shape: const CircleBorder(),
               child: Container(
                 height: AppSize.s60,
                 width: AppSize.s60,
                 decoration: BoxDecoration(
-                  // color: ColorManager.white,
-                  // border: Border.all(color: ColorManager.darkGrey),
                   shape: BoxShape.circle,
                   image: DecorationImage(
                     image: AssetImage(

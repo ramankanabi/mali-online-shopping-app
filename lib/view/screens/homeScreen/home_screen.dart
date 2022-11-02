@@ -123,6 +123,9 @@ class _HomeScreenState extends State<HomeScreen>
                               color: ColorManager.primary,
                               fontSize: FontSize.s20)),
                     ),
+                    const SizedBox(
+                      height: 25,
+                    ),
                     isLoading
                         ? Center(
                             child: CircularProgressIndicator(
@@ -165,15 +168,21 @@ class _HomeScreenState extends State<HomeScreen>
               itemCount: 5,
               itemBuilder: (ctx, index) => Stack(
                 children: [
-                  Container(
-                    height: 200,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "assets/images/cover3.jpg",
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                          context, Routes.salesDiscountScreenScreen);
+                    },
+                    child: Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "assets/images/cover3.jpg",
+                          ),
+                          fit: BoxFit.cover,
                         ),
-                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

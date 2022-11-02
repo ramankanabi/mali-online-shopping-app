@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:online_shopping/model/oder_model.dart';
 
+import '../apiService/dio_interceptors_wrapper.dart';
+import '../apiService/dio_options.dart';
 import '../model/cart_model.dart';
 import 'auth_contoller.dart';
 
@@ -11,6 +14,20 @@ class OrderController with ChangeNotifier {
   final List<Map> _finalOrderList = [];
   final List<List<Order>> _order = [];
   List<List<Order>> get order => _order;
+
+  Options dioOptions = DioOptions().dioOptions;
+  Dio getDio() {
+    Dio dio = Dio();
+
+    dio.interceptors.addAll(
+      [
+        DioInterceptorsWrapper(),
+        DioOptions().dioCacheManager.interceptor,
+      ],
+    );
+    return dio;
+  }
+
   prepareOrderList(List<Cart> cart) async {
     _finalOrderList.clear();
     cart.forEach((el) {
@@ -28,7 +45,7 @@ class OrderController with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<http.Response?> addOrder(
+  Future<Response?> addOrder(
     String customerId,
     String phoneNumber,
     String city,
@@ -38,13 +55,8 @@ class OrderController with ChangeNotifier {
       const url = "https://gentle-crag-94785.herokuapp.com/api/v1/orders";
       final cartUrl =
           "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$customerId";
-      final order = await http.post(Uri.parse(url),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Accept': 'application/json',
-            "Authorization": "Bearer $globalToken"
-          },
-          body: jsonEncode({
+      final order = await getDio().post(url,
+          data: jsonEncode({
             "customerId": customerId,
             "products": _finalOrderList,
             "phoneNumber": phoneNumber,
@@ -52,8 +64,8 @@ class OrderController with ChangeNotifier {
             "location": location
           }));
 
-      final deleteCurentCart = await http.delete(
-        Uri.parse(cartUrl),
+      final deleteCurentCart = await getDio().delete(
+        cartUrl,
       );
       return order;
     } catch (er) {
@@ -66,10 +78,9 @@ class OrderController with ChangeNotifier {
     _order.clear();
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/orders/customer/$customerId";
-    // notifyListeners();
-    final response = await http.get(Uri.parse(url));
-    final orderList = jsonDecode(response.body)["data"]["data"] as List;
-    final generalData = jsonDecode(response.body);
+    final response = await getDio().get(url);
+    final orderList = response.data["data"]["data"] as List;
+    final generalData = response.data;
 
     for (var orderListData in orderList) {
       final products = orderListData["products"] as List;
@@ -80,9 +91,6 @@ class OrderController with ChangeNotifier {
       ]);
     }
 
-    // _orderItem = productData
-    //     .map((prodData) => Order.fromJson(prodData, generalData))
-    //     .toList();
     notifyListeners();
     return response;
   }

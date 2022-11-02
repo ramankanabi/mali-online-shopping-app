@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
+import '../apiService/dio_interceptors_wrapper.dart';
+import '../apiService/dio_options.dart';
 import '../model/cart_model.dart';
 import 'auth_contoller.dart';
 
@@ -11,49 +13,31 @@ class CartController with ChangeNotifier {
   double _totalPrice = 0;
   double get totalPrice => _totalPrice;
   List<Cart> get cart => _cart;
+  Options dioOptions = DioOptions().dioOptions;
+  Dio getDio() {
+    Dio dio = Dio();
+
+    dio.interceptors.addAll(
+      [
+        DioInterceptorsWrapper(),
+        DioOptions().dioCacheManager.interceptor,
+      ],
+    );
+    return dio;
+  }
 
   Future<void> addCart(Cart cart) async {
     try {
-      final isUserHasCart = await http.get(Uri.parse(
-          "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId"));
-
-      if (isUserHasCart.statusCode == 404) {
-        const url = "https://gentle-crag-94785.herokuapp.com/api/v1/carts";
-        final _cart = await http.post(
-          Uri.parse(url),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Accept': 'application/json',
-            "Authorization": "Bearer $globalToken"
-          },
-          body: jsonEncode(
-            {
-              "customerId": cart.customerId,
-              "products": [
-                {
-                  "productName": cart.productName,
-                  "productId": cart.productId,
-                  "images": cart.images,
-                  "quantity": cart.quantity,
-                  "size": cart.size,
-                  "price": cart.price,
-                  "subTotalPrice": 2,
-                }
-              ],
-            },
-          ),
-        );
-      } else {
+      await getDio()
+          .get(
+        "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId",
+      )
+          .then((_) async {
         final url =
             "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId";
-        final _cart = await http.patch(
-          Uri.parse(url),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Accept': 'application/json',
-            "Authorization": "Bearer $globalToken"
-          },
-          body: jsonEncode(
+        await getDio().patch(
+          url,
+          data: jsonEncode(
             {
               "images": cart.images,
               "quantity": cart.quantity,
@@ -64,23 +48,45 @@ class CartController with ChangeNotifier {
             },
           ),
         );
-      }
+      }).catchError((err) async {
+        if (err.toString().contains("404")) {
+          const url = "https://gentle-crag-94785.herokuapp.com/api/v1/carts";
+          final _cart = await getDio().post(
+            url,
+            data: jsonEncode(
+              {
+                "customerId": cart.customerId,
+                "products": [
+                  {
+                    "productName": cart.productName,
+                    "productId": cart.productId,
+                    "images": cart.images,
+                    "quantity": cart.quantity,
+                    "size": cart.size,
+                    "price": cart.price,
+                    "subTotalPrice": 2,
+                  }
+                ],
+              },
+            ),
+          );
+        }
+      });
     } catch (er) {
       print(er);
     }
   }
 
-  Future<http.Response?> getCart(String userId) async {
+  Future<Response?> getCart(String userId) async {
     final url = "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$userId";
 
     try {
-      final cart = await http.get(Uri.parse(url));
-      final extractedData = jsonDecode(cart.body)["data"]["products"] as List;
-      final customerId = jsonDecode(cart.body)["data"]["customerId"];
+      final cart = await getDio().get(url);
+      final extractedData = cart.data["data"]["products"] as List;
+      final customerId = cart.data["data"]["customerId"];
 
-      _totalPrice = jsonDecode(cart.body)["priceCalculation"][0]
-              ["subTotalPrice"]
-          .toDouble();
+      _totalPrice =
+          cart.data["priceCalculation"][0]["subTotalPrice"].toDouble();
       print(_cart.length);
 
       _cart = extractedData.map((el) => Cart.fromJson(el, customerId)).toList();
@@ -95,31 +101,19 @@ class CartController with ChangeNotifier {
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId/product/$objectId";
 
-    await http.patch(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json',
-        "Authorization": "Bearer $globalToken"
-      },
-      body: jsonEncode(
+    await getDio().patch(
+      url,
+      data: jsonEncode(
         {"quantity": quantity},
       ),
     );
   }
 
   Future<void> removeProductFromCart(Cart cart) async {
-    // final index =
-    //     _cart.indexWhere((element) => element.objectId == cart.objectId);
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId/product/${cart.objectId}";
-    await http.delete(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json',
-        "Authorization": "Bearer $globalToken"
-      },
+    await getDio().delete(
+      url,
     );
   }
 

@@ -7,30 +7,31 @@ import 'package:provider/provider.dart';
 import '../../../model/product_model.dart';
 import '../../../widgets/product_item_widget.dart';
 
-class CategoryScreen extends StatefulWidget {
-  final String categoryName;
-  const CategoryScreen({super.key, required this.categoryName});
+class SalesDiscountScreen extends StatefulWidget {
+  const SalesDiscountScreen({
+    super.key,
+  });
 
   @override
-  State<CategoryScreen> createState() => _CategoryScreenState();
+  State<SalesDiscountScreen> createState() => _SalesDiscountScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen>
-    with AutomaticKeepAliveClientMixin<CategoryScreen> {
+class _SalesDiscountScreenState extends State<SalesDiscountScreen>
+    with AutomaticKeepAliveClientMixin<SalesDiscountScreen> {
   late Future _future;
   late ScrollController gridViewController = ScrollController();
   bool isInit = true;
   @override
   void initState() {
     _future = Provider.of<ProductContoller>(context, listen: false)
-        .fetchCategoryProductData(widget.categoryName);
+        .fetchAdvertiseProductData();
 
     gridViewController.addListener(() async {
       if (gridViewController.position.extentAfter < 300) {
         if (isInit == true) {
           isInit = false;
           await Provider.of<ProductContoller>(context, listen: false)
-              .categoryloadMore(widget.categoryName)
+              .advertiseloadMore()
               .then((_) {
             isInit = true;
           });
@@ -41,10 +42,9 @@ class _CategoryScreenState extends State<CategoryScreen>
   }
 
   Future _onRefresh() async {
-    Provider.of<ProductContoller>(context, listen: false)
-        .resetCategoryProductItem();
+    Provider.of<ProductContoller>(context, listen: false).resetAdvertiseItem();
     await Provider.of<ProductContoller>(context, listen: false)
-        .fetchCategoryProductData(widget.categoryName);
+        .fetchAdvertiseProductData();
   }
 
   @override
@@ -54,23 +54,15 @@ class _CategoryScreenState extends State<CategoryScreen>
       child: Scaffold(
         backgroundColor: ColorManager.white,
         appBar: AppBar(
-          title: Text(
-            widget.categoryName,
+          title: const Text(
+            "Sales discount",
           ),
-
-          // ignore: prefer_const_literals_to_create_immutables
-          actions: [
-            const Padding(
-              padding: EdgeInsets.all(AppPadding.p8),
-              child: Icon(Icons.format_list_bulleted_sharp),
-            )
-          ],
         ),
         body: FutureBuilder(
           future: _future,
           builder: (context, snapshot) {
             final productData =
-                Provider.of<ProductContoller>(context).categoryItems;
+                Provider.of<ProductContoller>(context).advertiseItems;
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Loader();
             } else if (productData.isNotEmpty) {

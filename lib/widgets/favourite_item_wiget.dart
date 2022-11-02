@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
@@ -7,7 +8,7 @@ import 'package:online_shopping/model/product_model.dart';
 import 'package:online_shopping/resources/values_manager.dart';
 import 'package:online_shopping/widgets/show_bottom_modal_sheet.dart';
 import 'package:provider/provider.dart';
-
+import '../cacheManager/image_cache_manager.dart' as cache;
 import '../resources/color_manager.dart';
 import '../resources/font_manager.dart';
 import '../resources/routes_manager.dart';
@@ -41,7 +42,7 @@ class _FavouriteItemWidgetState extends State<FavouriteItemWidget> {
       onTap: () async {
         final favStatus = await Navigator.pushNamed(
             context, Routes.productViewScreen,
-            arguments: [favourite.prodId, isFav]);
+            arguments: [favourite.prodId]);
         setState(() {
           _isFav = favStatus.toString() == "true";
         });
@@ -62,9 +63,11 @@ class _FavouriteItemWidgetState extends State<FavouriteItemWidget> {
                         SizedBox(
                           width: bxct.maxWidth * 0.25,
                           height: bxct.maxHeight,
-                          child: Image.network(
-                            favourite.images[0].toString(),
+                          child: CachedNetworkImage(
+                            imageUrl: favourite.images[0].toString(),
                             fit: BoxFit.cover,
+                            cacheManager:
+                                cache.ImageCacheManager().cacheManager,
                           ),
                         ),
                         const SizedBox(

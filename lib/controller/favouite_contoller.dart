@@ -1,9 +1,13 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
 import 'package:http/http.dart' as http;
 import 'package:online_shopping/model/favourite_model.dart';
+
+import '../apiService/dio_interceptors_wrapper.dart';
+import '../apiService/dio_options.dart';
 
 class FavouriteContoller with ChangeNotifier {
   bool _isFav = false;
@@ -18,16 +22,24 @@ class FavouriteContoller with ChangeNotifier {
     return _isFav;
   }
 
+  Options dioOptions = DioOptions().dioOptions;
+  Dio getDio() {
+    Dio dio = Dio();
+
+    dio.interceptors.addAll(
+      [
+        DioInterceptorsWrapper(),
+        DioOptions().dioCacheManager.interceptor,
+      ],
+    );
+    return dio;
+  }
+
   Future<void> addToFavourite(String prodId, String userId) async {
     const url = "https://gentle-crag-94785.herokuapp.com/api/v1/favourites";
     try {
-      await http.post(Uri.parse(url),
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Accept': 'application/json',
-            "Authorization": "Bearer $globalToken"
-          },
-          body: jsonEncode({
+      await getDio().post(url,
+          data: jsonEncode({
             "userId": userId,
             "productId": prodId,
           }));
@@ -40,45 +52,29 @@ class FavouriteContoller with ChangeNotifier {
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId/product/$prodId";
     try {
-      final deleteFav = await http.delete(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json',
-          "Authorization": "Bearer $globalToken"
-        },
+      final deleteFav = await getDio().delete(
+        url,
       );
     } catch (er) {
       print(er);
     }
   }
 
-  Future<http.Response?> getFavourite(String prodId, String userId) async {
+  Future<bool> getFavourite(String prodId, String userId) async {
     _isFav = false;
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId/product/$prodId";
     try {
-      final fav = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json',
-          "Authorization": "Bearer $globalToken"
-        },
+      final fav = await getDio().get(
+        url,
       );
       if (fav.statusCode != 404) {
-        _isFav = true;
-        print("trueeeeeeeeeeeeeeeeeeeeee");
-        notifyListeners();
+        return true;
       } else {
-        print("flaaaasssseeee");
-        _isFav = false;
-        notifyListeners();
+        return false;
       }
-
-      return fav;
     } catch (er) {
-      print(er);
+      return false;
     }
   }
 
@@ -88,16 +84,11 @@ class FavouriteContoller with ChangeNotifier {
       final url =
           "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
 
-      final favs = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json',
-          "Authorization": "Bearer $globalToken"
-        },
+      final favs = await getDio().get(
+        url,
       );
       if (favs.statusCode != 404) {
-        final extractedData = jsonDecode(favs.body)["data"]["data"] as List;
+        final extractedData = favs.data["data"]["data"] as List;
 
         _favItems = extractedData
             .map((prodData) => Favourite.fromJson(prodData))
