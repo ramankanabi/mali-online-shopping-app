@@ -290,8 +290,10 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
               height: AppSize.s400,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: CachedNetworkImageProvider(product.images[index],
-                      cacheManager: cache.ImageCacheManager().cacheManager),
+                  image: CachedNetworkImageProvider(
+                    product.images[index],
+                    cacheManager: cache.ImageCacheManager().cacheManager,
+                  ),
                   fit: BoxFit.cover,
                 ),
               ),

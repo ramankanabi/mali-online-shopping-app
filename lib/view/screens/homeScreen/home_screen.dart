@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen>
     _future = Provider.of<ProductContoller>(context, listen: false)
         .fetchProductData();
     gridViewController.addListener(() async {
-      if (gridViewController.position.extentAfter < 300) {
+      if (gridViewController.position.extentAfter < 50) {
         if (isInit == true) {
           isInit = false;
           Provider.of<ProductContoller>(context, listen: false)

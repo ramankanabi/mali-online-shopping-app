@@ -129,9 +129,10 @@ class _OrderScreenState extends State<OrderScreen> {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                  orderData[i].images[0],
-                                  cacheManager:
-                                      cache.ImageCacheManager().cacheManager),
+                                orderData[i].images[0],
+                                // cacheManager:
+                                //     cache.ImageCacheManager().cacheManager,
+                              ),
                               fit: BoxFit.cover),
                         ),
                       ),
@@ -241,9 +242,10 @@ class _OrderScreenState extends State<OrderScreen> {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: CachedNetworkImageProvider(
-                                orderData.images[i],
-                                cacheManager:
-                                    cache.ImageCacheManager().cacheManager),
+                              orderData.images[i],
+                              cacheManager:
+                                  cache.ImageCacheManager().cacheManager,
+                            ),
                             fit: BoxFit.cover,
                           ),
                         ),

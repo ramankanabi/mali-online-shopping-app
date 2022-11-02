@@ -29,7 +29,7 @@ class SearchController with ChangeNotifier {
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/products/search/$searchInput";
     try {
-      final search = await getDio().get(url);
+      final search = await getDio().get(url, options: dioOptions);
       final extractedData = search.data["data"] as List;
 
       _searchList =

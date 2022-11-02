@@ -85,9 +85,10 @@ class _ShowModalBottomSheetState extends State<ShowModalBottomSheet> {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                  widget.product.images[index],
-                                  cacheManager:
-                                      cache.ImageCacheManager().cacheManager),
+                                widget.product.images[index],
+                                cacheManager:
+                                    cache.ImageCacheManager().cacheManager,
+                              ),
                               fit: BoxFit.cover),
                         ),
                       ),

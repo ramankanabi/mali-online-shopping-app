@@ -78,7 +78,7 @@ class OrderController with ChangeNotifier {
     _order.clear();
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/orders/customer/$customerId";
-    final response = await getDio().get(url);
+    final response = await getDio().get(url, options: dioOptions);
     final orderList = response.data["data"]["data"] as List;
     final generalData = response.data;
 

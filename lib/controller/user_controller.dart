@@ -35,7 +35,7 @@ class UserController with ChangeNotifier {
       _isLoading = true;
       final url =
           "https://gentle-crag-94785.herokuapp.com/api/v1/user/id/$userId";
-      final user = await getDio().get(url);
+      final user = await getDio().get(url, options: dioOptions);
       final extractedData = user.data;
       _user = User(
           name: extractedData["data"]["user"]["name"],

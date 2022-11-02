@@ -76,10 +76,11 @@ class _CartItemState extends State<CartItem>
                                 children: [
                                   Row(children: [
                                     CachedNetworkImage(
-                                        imageUrl: cart.images[0],
-                                        fit: BoxFit.cover,
-                                        cacheManager: cache.ImageCacheManager()
-                                            .cacheManager),
+                                      imageUrl: cart.images[0],
+                                      fit: BoxFit.cover,
+                                      cacheManager: cache.ImageCacheManager()
+                                          .cacheManager,
+                                    ),
                                     const SizedBox(
                                       width: 10,
                                     ),

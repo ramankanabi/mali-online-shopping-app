@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/apiService/dio_interceptors_wrapper.dart';
 import 'package:online_shopping/apiService/dio_options.dart';
@@ -174,7 +173,6 @@ class ProductContoller with ChangeNotifier {
   }
 
   resetItem() {
-    getDio().interceptors.clear();
     _items.clear();
     notifyListeners();
   }

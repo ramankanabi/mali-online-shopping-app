@@ -65,9 +65,7 @@ class FavouriteContoller with ChangeNotifier {
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId/product/$prodId";
     try {
-      final fav = await getDio().get(
-        url,
-      );
+      final fav = await getDio().get(url, options: dioOptions);
       if (fav.statusCode != 404) {
         return true;
       } else {
@@ -84,9 +82,7 @@ class FavouriteContoller with ChangeNotifier {
       final url =
           "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
 
-      final favs = await getDio().get(
-        url,
-      );
+      final favs = await getDio().get(url, options: dioOptions);
       if (favs.statusCode != 404) {
         final extractedData = favs.data["data"]["data"] as List;
 

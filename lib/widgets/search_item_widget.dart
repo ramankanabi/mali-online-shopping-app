@@ -43,9 +43,11 @@ class SearchItemWidget extends StatelessWidget {
                     width: bxct.maxWidth * 0.20,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: CachedNetworkImageProvider(product.images[0],
-                              cacheManager:
-                                  cache.ImageCacheManager().cacheManager),
+                          image: CachedNetworkImageProvider(
+                            product.images[0],
+                            cacheManager:
+                                cache.ImageCacheManager().cacheManager,
+                          ),
                           fit: BoxFit.cover),
                     ),
                   ),
