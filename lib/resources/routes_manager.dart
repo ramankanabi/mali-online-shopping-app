@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:online_shopping/resources/strings_manager.dart';
 import 'package:online_shopping/view/screens/authScreen/auth_screen.dart';
 import 'package:online_shopping/view/screens/cartScreen/cart_screen.dart';
-import 'package:online_shopping/view/screens/homeScreen/category_screen.dart';
+import 'package:online_shopping/view/screens/categoryScreen/category_screen.dart';
 import 'package:online_shopping/view/screens/favouriteScreen/favourite_sceen.dart';
 import 'package:online_shopping/view/screens/homeScreen/sales_discount_screen.dart';
 import 'package:online_shopping/view/screens/orderScreen/form_submit_order.dart';

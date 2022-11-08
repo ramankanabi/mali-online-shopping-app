@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/controller/cart_controller.dart';
 import 'package:online_shopping/resources/font_manager.dart';
@@ -217,27 +218,7 @@ class _FormSubmitOrderState extends State<FormSubmitOrder> {
                       const SizedBox(
                         height: 50,
                       ),
-                      ElevatedButton(
-                          onPressed: () {
-                            _formSave(context);
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                              ColorManager.orange,
-                            ),
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: AppSize.s200,
-                            height: 40,
-                            child: Text(
-                              "Place Order",
-                              textAlign: TextAlign.center,
-                              style: getMediumStyle(
-                                color: ColorManager.white,
-                              ),
-                            ),
-                          )),
+                      PlaceOrderButtonWidget(),
                     ],
                   ),
                 ),
@@ -247,5 +228,38 @@ class _FormSubmitOrderState extends State<FormSubmitOrder> {
         ),
       ),
     );
+  }
+
+  Widget PlaceOrderButtonWidget() {
+    return ElevatedButton(
+        onPressed: () async {
+          final connectionStatus = await Connectivity().checkConnectivity();
+          if (connectionStatus == ConnectivityResult.none) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Check internet connection"),
+              ),
+            );
+          } else {
+            _formSave(context);
+          }
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(
+            ColorManager.orange,
+          ),
+        ),
+        child: Container(
+          alignment: Alignment.center,
+          width: AppSize.s200,
+          height: 40,
+          child: Text(
+            "Place Order",
+            textAlign: TextAlign.center,
+            style: getMediumStyle(
+              color: ColorManager.white,
+            ),
+          ),
+        ));
   }
 }

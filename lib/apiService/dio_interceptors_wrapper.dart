@@ -1,10 +1,8 @@
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 
 import '../controller/auth_contoller.dart';
 
-class DioInterceptorsWrapper extends QueuedInterceptorsWrapper {
+class DioInterceptorsWrapper extends InterceptorsWrapper {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
     super.onError(err, handler);

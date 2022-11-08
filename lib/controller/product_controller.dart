@@ -3,20 +3,28 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/apiService/dio_interceptors_wrapper.dart';
 import 'package:online_shopping/apiService/dio_options.dart';
+import 'package:online_shopping/controller/filter_product_controller.dart';
 import 'package:online_shopping/model/product_model.dart';
 import "package:dio/dio.dart";
+import 'package:provider/provider.dart';
 
 class ProductContoller with ChangeNotifier {
   int _page = 1;
   int _categoryPage = 1;
   int _advertisePage = 1;
-  final int _limit = 4;
+  final int _limit = 10;
 
   List<Product> _items = [];
   List<Product> get items => _items;
 
   Product _product = Product(
-      quantity: 0, name: "", prodId: "", price: 0, size: [], images: []);
+      quantity: 0,
+      name: "",
+      prodId: "",
+      price: 0,
+      size: [],
+      images: [],
+      relatedProduct: []);
 
   Product get product => _product;
 
@@ -116,6 +124,23 @@ class ProductContoller with ChangeNotifier {
     try {
       final url =
           "https://gentle-crag-94785.herokuapp.com/api/v1/products?category=$category&page=$_categoryPage&limit=$_limit";
+      final response = await getDio().get(url);
+      final extractedData = response.data["data"] as List;
+
+      _categoryItems =
+          extractedData.map((prodData) => Product.fromJson(prodData)).toList();
+      notifyListeners();
+      return response;
+    } catch (er) {
+      print(er);
+    }
+  }
+
+  Future fetchFilteredCategoryProductData(String query) async {
+    _categoryPage = 1;
+    try {
+      final url =
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?$query";
       final response = await getDio().get(url);
       final extractedData = response.data["data"] as List;
 

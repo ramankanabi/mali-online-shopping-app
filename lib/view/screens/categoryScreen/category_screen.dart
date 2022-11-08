@@ -1,14 +1,19 @@
+import 'dart:async';
+
+import 'package:badges/badges.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/controller/product_controller.dart';
 import 'package:online_shopping/resources/color_manager.dart';
-import 'package:online_shopping/resources/font_manager.dart';
 import 'package:online_shopping/resources/style_manager.dart';
 import 'package:online_shopping/resources/values_manager.dart';
-import 'package:online_shopping/widgets/circle_category_widget.dart';
 import 'package:online_shopping/widgets/loader-shimmer-widgets/loader.dart';
 import 'package:provider/provider.dart';
+import '../../../controller/filter_product_controller.dart';
 import '../../../model/product_model.dart';
+import '../../../resources/font_manager.dart';
 import '../../../widgets/product_item_widget.dart';
+import 'filter_drawer.dart';
 
 class CategoryScreen extends StatefulWidget {
   final String categoryName;
@@ -23,13 +28,15 @@ class _CategoryScreenState extends State<CategoryScreen>
   late Future _future;
   late ScrollController gridViewController = ScrollController();
   bool isInit = true;
+  bool isFilter = false;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     _future = Provider.of<ProductContoller>(context, listen: false)
         .fetchCategoryProductData(widget.categoryName);
 
     gridViewController.addListener(() async {
-      if (gridViewController.position.extentAfter < 300) {
+      if (gridViewController.position.extentAfter < 50) {
         if (isInit == true) {
           isInit = false;
           await Provider.of<ProductContoller>(context, listen: false)
@@ -46,54 +53,78 @@ class _CategoryScreenState extends State<CategoryScreen>
   Future _onRefresh() async {
     Provider.of<ProductContoller>(context, listen: false)
         .resetCategoryProductItem();
+
     await Provider.of<ProductContoller>(context, listen: false)
         .fetchCategoryProductData(widget.categoryName);
   }
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _onRefresh,
+    final isFiltered =
+        Provider.of<FilterProductController>(context, listen: true)
+            .getFilterStatus();
+
+    return WillPopScope(
+      onWillPop: () async {
+        await Provider.of<FilterProductController>(context, listen: false)
+            .clearFilter();
+        Navigator.pop(context);
+        return false;
+      },
       child: Scaffold(
+        key: _scaffoldKey,
+        endDrawer: FilterDrawer(
+          categoryName: widget.categoryName,
+        ),
         backgroundColor: ColorManager.white,
         appBar: AppBar(
           title: Text(
             widget.categoryName,
           ),
           actions: [
-            Padding(
-              padding: const EdgeInsets.all(AppPadding.p8),
-              child: TextButton(
-                child: Text(
-                  "category",
-                  style: getBoldStyle(
-                      color: ColorManager.orange, fontSize: FontSize.s14),
+            IconButton(
+              icon: Badge(
+                padding: const EdgeInsets.all(AppPadding.p5),
+                position: const BadgePosition(end: -5, top: -5),
+                showBadge: isFiltered,
+                badgeColor: ColorManager.orange.withOpacity(0.8),
+                child: Icon(
+                  CupertinoIcons.square_fill_line_vertical_square,
+                  color: ColorManager.grey,
                 ),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) => ShowCategoryDialog());
-                },
               ),
-            )
+              onPressed: () {
+                _scaffoldKey.currentState!.openEndDrawer();
+              },
+            ),
           ],
         ),
-        body: FutureBuilder(
-          future: _future,
-          builder: (context, snapshot) {
-            final productData =
-                Provider.of<ProductContoller>(context).categoryItems;
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Loader();
-            } else if (productData.isNotEmpty) {
-              return Padding(
-                padding: const EdgeInsets.all(AppPadding.p8),
-                child: GridViewProduct(productData),
-              );
-            } else {
-              return const Loader();
-            }
-          },
+        body: RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: FutureBuilder(
+            future: _future,
+            builder: (context, snapshot) {
+              final productData =
+                  Provider.of<ProductContoller>(context).categoryItems;
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Loader();
+              } else if (snapshot.connectionState == ConnectionState.done) {
+                return Padding(
+                  padding: const EdgeInsets.all(AppPadding.p8),
+                  child: GridViewProduct(productData),
+                );
+              } else {
+                return Center(
+                  child: Text(
+                    "somethings went wrong",
+                    style: getMediumStyle(
+                      color: ColorManager.grey,
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
         ),
       ),
     );
@@ -129,55 +160,6 @@ class _CategoryScreenState extends State<CategoryScreen>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget ShowCategoryDialog() {
-    List<Map> categoryData = [
-      {
-        "name": "shoes",
-        "image": "assets/images/categoriesIcon/shoes.png",
-      },
-      {
-        "name": "bags",
-        "image": "assets/images/categoriesIcon/handbag.png",
-      },
-      {
-        "name": "clothes",
-        "image": "assets/images/categoriesIcon/clothes.png",
-      },
-      {
-        "name": "eye glasses",
-        "image": "assets/images/categoriesIcon/sunglass.png",
-      },
-      {
-        "name": "jewelries",
-        "image": "assets/images/categoriesIcon/jewelry.png",
-      },
-      {
-        "name": "makeups",
-        "image": "assets/images/categoriesIcon/makeup.png",
-      }
-    ];
-    return Dialog(
-      elevation: 20,
-      backgroundColor: Colors.transparent,
-      child: Container(
-        height: MediaQuery.of(context).size.height / 2,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(40)),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2),
-          itemCount: categoryData.length,
-          itemBuilder: (context, index) {
-            return CircleCategoryWidget(
-                category: categoryData[index]["name"],
-                image: categoryData[index]["image"]);
-          },
-        ),
       ),
     );
   }

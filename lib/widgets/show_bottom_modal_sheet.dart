@@ -220,7 +220,9 @@ class _ShowModalBottomSheetState extends State<ShowModalBottomSheet> {
           );
           await Provider.of<CartController>(context, listen: false)
               .addCart(_cart);
-          Navigator.pop(context);
+          if (mounted) {
+            Navigator.pop(context);
+          }
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(ColorManager.orange),

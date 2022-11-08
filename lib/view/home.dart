@@ -119,8 +119,7 @@ class _HomeState extends State<Home> {
                 size: 30,
               ),
               onPressed: () async {
-                await DefaultCacheManager().removeFile("productImages");
-                // Navigator.pushNamed(context, Routes.cartScreen);
+                Navigator.pushNamed(context, Routes.cartScreen);
               },
             ),
           ),

@@ -81,7 +81,9 @@ class CartController with ChangeNotifier {
     final url = "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$userId";
 
     try {
-      final cart = await getDio().get(url, options: dioOptions);
+      final cart = await getDio().get(
+        url,
+      );
       final extractedData = cart.data["data"]["products"] as List;
       final customerId = cart.data["data"]["customerId"];
 

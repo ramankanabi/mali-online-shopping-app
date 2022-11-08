@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:online_shopping/cacheManager/image_cache_manager.dart';
 import 'package:online_shopping/controller/product_controller.dart';
 import 'package:online_shopping/resources/color_manager.dart';
 import 'package:online_shopping/resources/font_manager.dart';
@@ -14,7 +15,6 @@ import '../../../model/product_model.dart';
 import '../../../resources/routes_manager.dart';
 import '../../../widgets/product_item_widget.dart';
 import '/resources/style_manager.dart';
-import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    ImageCacheManager().getImageCache();
     _future = Provider.of<ProductContoller>(context, listen: false)
         .fetchProductData();
     gridViewController.addListener(() async {

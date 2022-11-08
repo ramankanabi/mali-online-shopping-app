@@ -75,12 +75,7 @@ class _CartItemState extends State<CartItem>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(children: [
-                                    CachedNetworkImage(
-                                      imageUrl: cart.images[0],
-                                      fit: BoxFit.cover,
-                                      cacheManager: cache.ImageCacheManager()
-                                          .cacheManager,
-                                    ),
+                                    ImageWidget(),
                                     const SizedBox(
                                       width: 10,
                                     ),
@@ -266,4 +261,12 @@ class _CartItemState extends State<CartItem>
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget ImageWidget() {
+    return CachedNetworkImage(
+      imageUrl: cart.images[0],
+      fit: BoxFit.cover,
+      cacheManager: cache.ImageCacheManager().cacheManager,
+    );
+  }
 }

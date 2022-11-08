@@ -14,7 +14,6 @@ import '../resources/font_manager.dart';
 import '../resources/style_manager.dart';
 import '../resources/values_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import "../cacheManager/image_cache_manager.dart" as cache;
 
 class ProductItemWidget extends StatefulWidget {

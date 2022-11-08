@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
 import 'package:online_shopping/controller/cart_controller.dart';
 import 'package:online_shopping/controller/favouite_contoller.dart';
+import 'package:online_shopping/controller/filter_product_controller.dart';
 import 'package:online_shopping/controller/order_controller.dart';
 import 'package:online_shopping/controller/product_controller.dart';
 import 'package:online_shopping/resources/routes_manager.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (ctx) => SearchController(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => FilterProductController(),
         ),
       ],
       child: MaterialApp(

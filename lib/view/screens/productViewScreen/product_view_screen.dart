@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import '../../../controller/auth_contoller.dart';
 import '../../../controller/favouite_contoller.dart';
 import '../../../model/product_model.dart';
+import '../../../resources/routes_manager.dart';
 import '../../../widgets/show_bottom_modal_sheet.dart';
 import '../../../cacheManager/image_cache_manager.dart' as cache;
 
@@ -82,7 +83,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
       child: FutureBuilder(
           future: _future,
           builder: (context, snapshot) {
-            final _product =
+            final product =
                 Provider.of<ProductContoller>(context, listen: true).product;
             return Scaffold(
               body: snapshot.connectionState == ConnectionState.waiting ||
@@ -98,28 +99,28 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 ImageCover(
-                                  _product,
+                                  product,
                                 ),
-                                NamePriceFav(_product, isLogged),
+                                NamePriceFav(product, isLogged),
                                 SizedBox(
                                   height: AppSize.s70,
                                   width: double.infinity,
                                   child: SizeView(
-                                    _product,
+                                    product,
                                   ),
                                 ),
                                 SizedBox(
                                   height: AppSize.s100,
                                   width: double.infinity,
                                   child: ColorView(
-                                    _product,
+                                    product,
                                   ),
                                 ),
                                 SizedBox(
                                   height: 15,
                                 ),
                                 DescriptionView(
-                                  _product,
+                                  product,
                                 ),
                               ],
                             ),
@@ -153,7 +154,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                           ),
                         ),
               persistentFooterButtons: [
-                Footer(_product, isLogged),
+                Footer(product, isLogged),
               ],
             );
           }),
@@ -399,21 +400,30 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
           child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
-              itemCount: product.relatedProduct?.length,
+              itemCount: product.relatedProduct!.length,
               itemBuilder: (context, index) {
                 return Padding(
                     padding: EdgeInsets.all(AppPadding.p5),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(AppRadius.r3),
-                      child: Container(
-                        height: AppSize.s100,
-                        width: AppSize.s60,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(
-                                "assets/images/productImages/p4.jpg",
-                              ),
-                              fit: BoxFit.cover),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.productViewScreen,
+                              arguments: [
+                                product.relatedProduct?[index]["productId"]
+                              ]);
+                        },
+                        child: Container(
+                          height: AppSize.s100,
+                          width: AppSize.s60,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                  product.relatedProduct![index]["images"][0]
+                                      .toString(),
+                                ),
+                                fit: BoxFit.cover),
+                          ),
                         ),
                       ),
                     ));

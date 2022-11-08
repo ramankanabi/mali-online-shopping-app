@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
@@ -143,16 +144,7 @@ class _CartScreenState extends State<CartScreen>
                       MaterialStateProperty.all(ColorManager.orange),
                 ),
                 onPressed: () {
-                  if (cart.isNotEmpty) {
-                    Navigator.pushNamed(context, Routes.formSubmitOrder,
-                        arguments: [cart]);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Cart is empty :("),
-                      ),
-                    );
-                  }
+                  placeOrder(context, cart);
                 },
                 child: Text(
                   "Place Order",
@@ -169,4 +161,24 @@ class _CartScreenState extends State<CartScreen>
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+}
+
+void placeOrder(BuildContext context, List cart) async {
+  final connectionStatus = await Connectivity().checkConnectivity();
+
+  if (connectionStatus == ConnectivityResult.none) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Check internet connection"),
+      ),
+    );
+  } else if (cart.isNotEmpty) {
+    Navigator.pushNamed(context, Routes.formSubmitOrder, arguments: [cart]);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Cart is empty :("),
+      ),
+    );
+  }
 }
