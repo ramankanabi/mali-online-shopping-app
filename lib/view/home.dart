@@ -8,7 +8,7 @@ import 'package:online_shopping/view/screens/favouriteScreen/favourite_sceen.dar
 import 'package:online_shopping/view/screens/homeScreen/home_screen.dart';
 import 'package:online_shopping/view/screens/profileScreen/profile_screen.dart';
 import 'package:provider/provider.dart';
-
+import "package:flutter_native_splash/flutter_native_splash.dart";
 import '../cacheManager/image_cache_manager.dart' as cache;
 import '../resources/routes_manager.dart';
 
@@ -45,6 +45,13 @@ class _HomeState extends State<Home> {
       isInit = false;
     });
     super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    Future.delayed(const Duration(seconds: 3))
+        .then((value) => {FlutterNativeSplash.remove()});
+    super.initState();
   }
 
   @override

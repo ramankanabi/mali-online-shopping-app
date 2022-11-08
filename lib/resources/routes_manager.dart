@@ -1,17 +1,6 @@
-// ignore_for_file: prefer_const_constructors
-
-// import '../forgotPassword/forgot_password.dart';
-// import '../login/login.dart';
-// import '../main/main_view.dart';
-// import '../onboarding/onBoarding.dart';
-// import '../register/register.dart';
-// import '../manager/strings_manager.dart';
-// import '../splash/splash.dart';
-// import '../store_details/store_details.dart';
-// import 'package:new_era_flutter/manager/strings_manager.dart';
-
 import 'package:flutter/material.dart';
 import 'package:online_shopping/resources/strings_manager.dart';
+import 'package:online_shopping/view/home.dart';
 import 'package:online_shopping/view/screens/authScreen/auth_screen.dart';
 import 'package:online_shopping/view/screens/cartScreen/cart_screen.dart';
 import 'package:online_shopping/view/screens/categoryScreen/category_screen.dart';
@@ -25,7 +14,7 @@ import 'package:online_shopping/view/screens/productViewScreen/product_view_scre
 import '../view/screens/homeScreen/search_screen.dart';
 
 class Routes {
-  static const String splashRoute = "/";
+  static const String home = "/home";
   static const String categorySceen = "/categoryScreen";
   static const String productViewScreen = "/productViewScreen";
   static const String authScreen = "/authScreen";
@@ -42,8 +31,8 @@ class Routes {
 class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
-      // case Routes.splashRoute:
-      //   return MaterialPageRoute(builder: (_) => SplashView());
+      case Routes.home:
+        return MaterialPageRoute(builder: (_) => const Home());
       case Routes.categorySceen:
         List<dynamic> args = routeSettings.arguments as List;
         return MaterialPageRoute(
