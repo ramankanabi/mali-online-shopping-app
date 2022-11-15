@@ -32,7 +32,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final _phoneNumberKey = GlobalKey<FormState>();
   final _informationKey = GlobalKey<FormState>();
-  final _verificationKey = GlobalKey<FormState>();
   TextEditingController smsCodeContoller = TextEditingController();
   User user = User(name: "", phoneNumber: "", city: "", birthYear: 0);
   startCounter() {
@@ -103,9 +102,7 @@ class _AuthScreenState extends State<AuthScreen> {
         startCounter();
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("code is sent")));
-      }).catchError((er) {
-        print(er);
-      });
+      }).catchError((er) {});
 
       pageContoller.jumpToPage(2);
     }
@@ -143,7 +140,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   height: MediaQuery.of(context).size.height / 2,
                   color: ColorManager.primary,
                 ),
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height / 2,
                 ),

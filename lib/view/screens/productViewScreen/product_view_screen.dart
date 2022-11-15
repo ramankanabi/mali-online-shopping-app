@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_null_comparison
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +16,7 @@ import '../../../controller/auth_contoller.dart';
 import '../../../controller/favouite_contoller.dart';
 import '../../../model/product_model.dart';
 import '../../../resources/routes_manager.dart';
+import '../../../widgets/product_item_widget.dart';
 import '../../../widgets/show_bottom_modal_sheet.dart';
 import '../../../cacheManager/image_cache_manager.dart' as cache;
 
@@ -94,84 +95,100 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                           child: Padding(
                           padding: const EdgeInsets.all(AppPadding.p8),
                           child: SingleChildScrollView(
+                            physics: BouncingScrollPhysics(),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                ImageCover(
+                                imageCover(
                                   product,
                                 ),
-                                NamePriceFav(product, isLogged),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                namePriceFav(product, isLogged),
                                 SizedBox(
                                   height: AppSize.s70,
                                   width: double.infinity,
-                                  child: SizeView(
+                                  child: sizeView(
                                     product,
                                   ),
                                 ),
-                                SizedBox(
-                                  height: AppSize.s100,
-                                  width: double.infinity,
-                                  child: ColorView(
-                                    product,
+                                if (product.relatedProduct!.isNotEmpty) ...{
+                                  SizedBox(
+                                    height: AppSize.s100,
+                                    width: double.infinity,
+                                    child: colorView(
+                                      product,
+                                    ),
                                   ),
+                                },
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                descriptionView(
+                                  product,
+                                ),
+                                SizedBox(
+                                  height: 25,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                    Text(
+                                      "   similar products   ",
+                                      style: getMediumStyle(
+                                        color: ColorManager.grey,
+                                        fontSize: FontSize.s16,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        // height: 21,
+                                        thickness: 1,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 SizedBox(
                                   height: 15,
                                 ),
-                                DescriptionView(
-                                  product,
+                                SimilarProducts(
+                                  category: product.category!,
                                 ),
                               ],
                             ),
                           ),
                         ))
-                      : Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Oh, somthings goes wrong",
-                                style: getMediumStyle(
-                                    color: ColorManager.grey,
-                                    fontSize: FontSize.s17),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  "Go Back",
-                                  style: getMediumStyle(
-                                      color: ColorManager.orange,
-                                      fontSize: FontSize.s16),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                      : somthingWrong(),
               persistentFooterButtons: [
-                Footer(product, isLogged),
+                footer(product, isLogged),
               ],
             );
           }),
     );
   }
 
-  Widget NamePriceFav(Product product, bool isLogged) {
+  Widget namePriceFav(Product product, bool isLogged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              product.name,
-              style: getBoldStyle(
-                  color: ColorManager.primary, fontSize: FontSize.s25),
+            Expanded(
+              child: Text(
+                product.name,
+                style: getBoldStyle(
+                    color: ColorManager.primary, fontSize: FontSize.s25),
+                softWrap: true,
+              ),
             ),
             Column(
               children: [
@@ -276,7 +293,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  Widget ImageCover(Product product) {
+  Widget imageCover(Product product) {
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -345,7 +362,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  Widget SizeView(Product product) {
+  Widget sizeView(Product product) {
     return Row(
       children: [
         Expanded(
@@ -382,7 +399,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  Widget ColorView(Product product) {
+  Widget colorView(Product product) {
     return Row(
       children: [
         Expanded(
@@ -419,8 +436,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: CachedNetworkImageProvider(
-                                  product.relatedProduct![index]["images"][0]
-                                      .toString(),
+                                  product.relatedProduct![index]["images"][0],
                                 ),
                                 fit: BoxFit.cover),
                           ),
@@ -433,7 +449,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  Widget DescriptionView(Product product) {
+  Widget descriptionView(Product product) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -462,7 +478,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  Widget Footer(Product product, bool isLoggedd) {
+  Widget footer(Product product, bool isLoggedd) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -508,5 +524,96 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
             )),
       ],
     );
+  }
+
+  Widget somthingWrong() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Oh, somthings goes wrong",
+            style: getMediumStyle(
+                color: ColorManager.grey, fontSize: FontSize.s17),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              "Go Back",
+              style: getMediumStyle(
+                  color: ColorManager.orange, fontSize: FontSize.s16),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SimilarProducts extends StatefulWidget {
+  const SimilarProducts({super.key, required this.category});
+  final String category;
+
+  @override
+  State<SimilarProducts> createState() => _SimilarProductsState();
+}
+
+class _SimilarProductsState extends State<SimilarProducts> {
+  late Future _future;
+  @override
+  void initState() {
+    _future = Provider.of<ProductContoller>(context, listen: false)
+        .similarProducts(widget.category);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container();
+          } else if (snapshot.hasData) {
+            final productData =
+                Provider.of<ProductContoller>(context, listen: false)
+                    .similarProdctItems;
+            return GridView.builder(
+              physics:
+                  const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+              shrinkWrap: true, // You won't see infinite size error
+              itemCount: productData.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                          spreadRadius: 1.5,
+                          blurRadius: 10,
+                          color: Colors.grey.shade300),
+                    ],
+                  ),
+                  child: ProductItemWidget(
+                    productData: productData[index],
+                  ),
+                );
+              },
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 1 / 1.5,
+              ),
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 }

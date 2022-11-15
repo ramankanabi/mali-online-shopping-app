@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:online_shopping/controller/product_controller.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controller/filter_product_controller.dart';
@@ -16,7 +14,7 @@ class ColorDrawer extends StatefulWidget {
 }
 
 class _ColorDrawerState extends State<ColorDrawer> {
-  List filterList = [];
+  String filterColor = "";
 
   final Map<String, Color> colorList = {
     "black": Colors.black,
@@ -37,14 +35,8 @@ class _ColorDrawerState extends State<ColorDrawer> {
     final colorFilterList =
         Provider.of<FilterProductController>(context, listen: false)
             .filterList["color"];
-    isSelectedList = List.generate(colorList.length, (i) {
-      if (colorFilterList!.contains(colorList.keys.toList()[i])) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-    filterList = colorFilterList!.toList();
+
+    filterColor = colorFilterList!;
     super.initState();
   }
 
@@ -72,11 +64,10 @@ class _ColorDrawerState extends State<ColorDrawer> {
                     padding: const EdgeInsets.all(10.0),
                     child: GestureDetector(
                       onTap: () {
-                        isSelectedList[i] = !isSelectedList[i];
-                        if (isSelectedList[i]) {
-                          filterList.add(colorList.keys.toList()[i]);
+                        if (filterColor != colorList.keys.toList()[i]) {
+                          filterColor = colorList.keys.toList()[i];
                         } else {
-                          filterList.remove(colorList.keys.toList()[i]);
+                          filterColor = "";
                         }
                         setState(() {});
                       },
@@ -88,7 +79,7 @@ class _ColorDrawerState extends State<ColorDrawer> {
                           color: colorList.values.toList()[i],
                           border: Border.all(width: 0.2),
                         ),
-                        child: isSelectedList[i]
+                        child: filterColor == colorList.keys.toList()[i]
                             ? Container(
                                 height: 50,
                                 width: 50,
@@ -115,7 +106,7 @@ class _ColorDrawerState extends State<ColorDrawer> {
         InkWell(
           onTap: () {
             Provider.of<FilterProductController>(context, listen: false)
-                .addColorFilter(filterList);
+                .addColorFilter(filterColor);
 
             Navigator.pop(context);
           },

@@ -1,8 +1,9 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import "package:http/http.dart" as http;
 import 'package:online_shopping/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -60,14 +61,10 @@ class AuthController with ChangeNotifier {
       } else {
         _isLogged = false;
       }
-      print("login succefully .");
       notifyListeners();
 
       notifyListeners();
-    } catch (er) {
-      print(er);
-      throw er;
-    }
+    } catch (_) {}
   }
 
   Future<void> _login(String token, User user) async {
@@ -96,19 +93,14 @@ class AuthController with ChangeNotifier {
         } else {
           _isLogged = false;
         }
-        print("login succefully .");
         notifyListeners();
       }
-    } catch (er) {
-      print(er);
-      throw er;
-    }
+    } catch (er) {}
   }
 
   Future<void> verifyPhone(User user) async {
     try {
-      final firebaseAuth = await auth.FirebaseAuth.instance
-          .verifyPhoneNumber(
+      await auth.FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: '+964${user.phoneNumber}',
         verificationCompleted: (auth.PhoneAuthCredential credential) async {
           // await auth.FirebaseAuth.instance.signInWithCredential(credential);
@@ -123,17 +115,9 @@ class AuthController with ChangeNotifier {
           _verificationCode = verificationID;
         },
         timeout: const Duration(seconds: 60),
-      )
-          .then((value) {
-        // startCounter();
-        // ScaffoldMessenger.of(context)
-        //     .showSnackBar(const SnackBar(content: Text("code is sent")));
-      });
+      );
       notifyListeners();
-    } catch (er) {
-      print(er);
-      throw er;
-    }
+    } catch (_) {}
   }
 
   Future<void> checkCode(String smsCodeContoller, User user) async {
@@ -159,7 +143,6 @@ class AuthController with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
-      throw e;
     }
   }
 

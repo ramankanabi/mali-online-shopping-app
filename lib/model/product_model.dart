@@ -6,12 +6,11 @@ class Product {
   final String? color;
   final List<dynamic>? relatedProduct;
   final String? discreption_EN;
-  final String? discreption_KU;
   final int? priceDiscount;
   final List<dynamic> images;
   final bool? isAvailable;
-  final int? deliveryPrice;
   final int quantity;
+  final String? category;
 
   Product({
     required this.quantity,
@@ -22,11 +21,10 @@ class Product {
     this.color,
     this.relatedProduct,
     this.discreption_EN,
-    this.discreption_KU,
     this.priceDiscount,
     required this.images,
     this.isAvailable,
-    this.deliveryPrice,
+    this.category,
   });
 
   factory Product.fromJson(Map<String, dynamic> extractedData) {
@@ -41,6 +39,7 @@ class Product {
         discreption_EN: extractedData["description_en"],
         images: extractedData["images"],
         isAvailable: extractedData["isAvailable"],
-        priceDiscount: extractedData["priceDiscount"]);
+        priceDiscount: extractedData["priceDiscount"],
+        category: extractedData["category"]);
   }
 }

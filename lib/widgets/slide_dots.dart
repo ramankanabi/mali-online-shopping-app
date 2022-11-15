@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:online_shopping/resources/color_manager.dart';
-import 'package:online_shopping/resources/values_manager.dart';
 
+// ignore: must_be_immutable
 class SlideDots extends StatelessWidget {
   bool isActive;
-  SlideDots(this.isActive);
+  SlideDots(this.isActive, {super.key});
 
   @override
   Widget build(BuildContext context) {

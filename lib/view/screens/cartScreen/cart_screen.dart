@@ -36,22 +36,19 @@ class _CartScreenState extends State<CartScreen>
       await Provider.of<CartController>(context, listen: false).resetItem();
       await Provider.of<CartController>(context, listen: false)
           .getCart(globalUserId);
-      // _cart = Provider.of<CartController>(context, listen: false).cart;
-      // setState(() {});
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: _onRefresh,
         child: FutureBuilder(
           future: _future,
           builder: (context, snapshot) {
-            final _cart =
+            final cart =
                 Provider.of<CartController>(context, listen: true).cart;
 
             final totalPrice =
@@ -71,10 +68,10 @@ class _CartScreenState extends State<CartScreen>
                       ? Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListView.builder(
-                            itemCount: _cart.length,
+                            itemCount: cart.length,
                             itemBuilder: (BuildContext context, int index) {
                               return CartItem(
-                                cart: _cart[index],
+                                cart: cart[index],
                               );
                             },
                           ),
@@ -102,7 +99,7 @@ class _CartScreenState extends State<CartScreen>
                           ),
                         ),
               persistentFooterButtons: [
-                Footer(_cart, totalPrice),
+                Footer(cart, totalPrice),
               ],
             );
           },
@@ -127,9 +124,11 @@ class _CartScreenState extends State<CartScreen>
                   fontSize: FontSize.s17,
                 ),
               ),
-              Text("$totalPrice IQD",
-                  style: getBoldStyle(
-                      color: ColorManager.orange, fontSize: FontSize.s20))
+              Text(
+                "$totalPrice IQD",
+                style: getBoldStyle(
+                    color: ColorManager.orange, fontSize: FontSize.s20),
+              )
             ],
           ),
           const SizedBox(
@@ -159,7 +158,6 @@ class _CartScreenState extends State<CartScreen>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
 

@@ -54,99 +54,103 @@ class SearchItemWidget extends StatelessWidget {
                   const SizedBox(
                     width: 10,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product.name,
-                        style: getMediumStyle(
-                            color: ColorManager.grey, fontSize: FontSize.s20),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      SizedBox(
-                        width: bxct.maxWidth * 0.70,
-                        child: Text(
-                          product.discreption_EN.toString(),
-                          maxLines: 1,
-                          style: getRegularStyle(
-                              color: ColorManager.lightGrey,
-                              fontSize: FontSize.s14),
+                  SizedBox(
+                    width: bxct.maxWidth * 0.75,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.name,
+                          style: getMediumStyle(
+                              color: ColorManager.grey, fontSize: FontSize.s20),
                           overflow: TextOverflow.ellipsis,
-                          softWrap: false,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      if (product.priceDiscount == 0) ...{
-                        Text.rich(
-                          TextSpan(
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        SizedBox(
+                          width: bxct.maxWidth * 0.70,
+                          child: Text(
+                            product.discreption_EN.toString(),
+                            maxLines: 1,
+                            style: getRegularStyle(
+                                color: ColorManager.lightGrey,
+                                fontSize: FontSize.s14),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: false,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        if (product.priceDiscount == 0) ...{
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: product.price.toString(),
+                                  style: getBoldStyle(
+                                      color: ColorManager.orange,
+                                      fontSize: FontSize.s16),
+                                ),
+                                TextSpan(
+                                  text: " IQD",
+                                  style: getBoldStyle(
+                                      color: ColorManager.orange,
+                                      fontSize: FontSize.s10),
+                                ),
+                              ],
+                            ),
+                          ),
+                        } else ...{
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                text: product.price.toString(),
-                                style: getBoldStyle(
-                                    color: ColorManager.orange,
-                                    fontSize: FontSize.s16),
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: product.price.toString(),
+                                      style: TextStyle(
+                                        fontSize: FontSize.s12,
+                                        fontWeight: FontWeight.normal,
+                                        color: ColorManager.lightGrey,
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: Colors.grey,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: " IQD",
+                                      style: getBoldStyle(
+                                          color: ColorManager.lightGrey,
+                                          fontSize: FontSize.s8),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              TextSpan(
-                                text: " IQD",
-                                style: getBoldStyle(
-                                    color: ColorManager.orange,
-                                    fontSize: FontSize.s10),
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: product.priceDiscount.toString(),
+                                      style: getBoldStyle(
+                                          color: ColorManager.orange,
+                                          fontSize: FontSize.s16),
+                                    ),
+                                    TextSpan(
+                                      text: " IQD",
+                                      style: getBoldStyle(
+                                          color: ColorManager.orange,
+                                          fontSize: FontSize.s10),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      } else ...{
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: product.price.toString(),
-                                    style: TextStyle(
-                                      fontSize: FontSize.s12,
-                                      fontWeight: FontWeight.normal,
-                                      color: ColorManager.lightGrey,
-                                      decoration: TextDecoration.lineThrough,
-                                      decorationColor: Colors.grey,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: " IQD",
-                                    style: getBoldStyle(
-                                        color: ColorManager.lightGrey,
-                                        fontSize: FontSize.s8),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: product.priceDiscount.toString(),
-                                    style: getBoldStyle(
-                                        color: ColorManager.orange,
-                                        fontSize: FontSize.s16),
-                                  ),
-                                  TextSpan(
-                                    text: " IQD",
-                                    style: getBoldStyle(
-                                        color: ColorManager.orange,
-                                        fontSize: FontSize.s10),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      }
-                    ],
+                        }
+                      ],
+                    ),
                   )
                 ],
               );

@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/apiService/dio_interceptors_wrapper.dart';
 import 'package:online_shopping/apiService/dio_options.dart';
-import 'package:online_shopping/controller/filter_product_controller.dart';
 import 'package:online_shopping/model/product_model.dart';
 import "package:dio/dio.dart";
-import 'package:provider/provider.dart';
 
 class ProductContoller with ChangeNotifier {
   int _page = 1;
@@ -18,13 +16,14 @@ class ProductContoller with ChangeNotifier {
   List<Product> get items => _items;
 
   Product _product = Product(
-      quantity: 0,
-      name: "",
-      prodId: "",
-      price: 0,
-      size: [],
-      images: [],
-      relatedProduct: []);
+    quantity: 0,
+    name: "",
+    prodId: "",
+    price: 0,
+    size: [],
+    images: [],
+    relatedProduct: [],
+  );
 
   Product get product => _product;
 
@@ -34,6 +33,9 @@ class ProductContoller with ChangeNotifier {
 
   List<Product> _categoryItems = [];
   List<Product> get categoryItems => _categoryItems;
+
+  List<Product> _similarProdctItems = [];
+  List<Product> get similarProdctItems => _similarProdctItems;
 
   Options dioOptions = DioOptions().dioOptions;
   Dio getDio() {
@@ -52,7 +54,7 @@ class ProductContoller with ChangeNotifier {
     try {
       _page = 1;
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit";
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit&sort=productName";
 
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = response.data["data"] as List;
@@ -61,9 +63,7 @@ class ProductContoller with ChangeNotifier {
           extractedData.map((prodData) => Product.fromJson(prodData)).toList();
       notifyListeners();
       return response;
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
   }
 
   Future<Response?> fetchOneProduct(String prodId) async {
@@ -76,9 +76,7 @@ class ProductContoller with ChangeNotifier {
       notifyListeners();
 
       return response;
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
     return null;
   }
 
@@ -94,9 +92,7 @@ class ProductContoller with ChangeNotifier {
           extractedData.map((prodData) => Product.fromJson(prodData)).toList();
       notifyListeners();
       return response;
-    } catch (er) {
-      print(er);
-    }
+    } catch (_) {}
   }
 
   Future advertiseloadMore() async {
@@ -113,17 +109,15 @@ class ProductContoller with ChangeNotifier {
             .map((prodData) => Product.fromJson(prodData))
             .toList());
       } else {}
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
     notifyListeners();
   }
 
-  Future fetchCategoryProductData(String category) async {
+  Future fetchCategoryProductData(String query) async {
     _categoryPage = 1;
     try {
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?category=$category&page=$_categoryPage&limit=$_limit";
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?$query&page=$_categoryPage&limit=$_limit";
       final response = await getDio().get(url);
       final extractedData = response.data["data"] as List;
 
@@ -131,33 +125,14 @@ class ProductContoller with ChangeNotifier {
           extractedData.map((prodData) => Product.fromJson(prodData)).toList();
       notifyListeners();
       return response;
-    } catch (er) {
-      print(er);
-    }
-  }
-
-  Future fetchFilteredCategoryProductData(String query) async {
-    _categoryPage = 1;
-    try {
-      final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?$query";
-      final response = await getDio().get(url);
-      final extractedData = response.data["data"] as List;
-
-      _categoryItems =
-          extractedData.map((prodData) => Product.fromJson(prodData)).toList();
-      notifyListeners();
-      return response;
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
   }
 
   Future loadMore() async {
     try {
       _page++;
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit";
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit&sort=productName";
 
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = response.data["data"] as List;
@@ -165,19 +140,18 @@ class ProductContoller with ChangeNotifier {
         _items.addAll(extractedData
             .map((prodData) => Product.fromJson(prodData))
             .toList());
+      } else {
+        _page = _page - 1;
       }
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
     notifyListeners();
   }
 
-  Future categoryloadMore(String categoryName) async {
+  Future categoryloadMore(String query) async {
     try {
       _categoryPage = _categoryPage + 1;
-
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?category=$categoryName&page=${_categoryPage}&limit=$_limit";
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?$query&page=$_categoryPage&limit=$_limit";
 
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = response.data["data"] as List;
@@ -185,11 +159,27 @@ class ProductContoller with ChangeNotifier {
         _categoryItems.addAll(extractedData
             .map((prodData) => Product.fromJson(prodData))
             .toList());
-      } else {}
-    } catch (er) {
-      print(er);
-    }
+      } else {
+        _categoryPage = _categoryPage - 1;
+      }
+    } catch (er) {}
     notifyListeners();
+  }
+
+  Future similarProducts(String category) async {
+    try {
+      _page = 1;
+      final url =
+          "https://gentle-crag-94785.herokuapp.com/api/v1/products?category=$category&limit=10";
+
+      final response = await getDio().get(url, options: dioOptions);
+      final extractedData = response.data["data"] as List;
+
+      _similarProdctItems =
+          extractedData.map((prodData) => Product.fromJson(prodData)).toList();
+      notifyListeners();
+      return response;
+    } catch (er) {}
   }
 
   resetCategoryProductItem() {

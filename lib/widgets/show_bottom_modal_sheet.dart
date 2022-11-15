@@ -52,7 +52,7 @@ class _ShowModalBottomSheetState extends State<ShowModalBottomSheet> {
     super.initState();
   }
 
-  Widget NameAndImages() {
+  Widget nameAndImages() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -249,7 +249,7 @@ class _ShowModalBottomSheetState extends State<ShowModalBottomSheet> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NameAndImages(),
+          nameAndImages(),
           SizesView(),
           Quantity(),
           AddToCart(),

@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import 'package:online_shopping/controller/filter_product_controller.dart';
+import 'package:provider/provider.dart';
 
 import '../resources/color_manager.dart';
 import '../resources/routes_manager.dart';
@@ -19,6 +21,8 @@ class CircleCategoryWidget extends StatelessWidget {
       padding: const EdgeInsets.all(AppPadding.p8),
       child: GestureDetector(
         onTap: () {
+          Provider.of<FilterProductController>(context, listen: false)
+              .addCategoryFilter(category);
           Navigator.pushNamed(
             context,
             Routes.categorySceen,
@@ -40,7 +44,7 @@ class CircleCategoryWidget extends StatelessWidget {
                     image: AssetImage(
                       image,
                     ),
-                    fit: BoxFit.scaleDown,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),

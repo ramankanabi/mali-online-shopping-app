@@ -1,13 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
-import 'package:online_shopping/controller/user_controller.dart';
-import 'package:online_shopping/model/user_model.dart';
 import 'package:online_shopping/resources/color_manager.dart';
 import 'package:online_shopping/resources/style_manager.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import "package:material_design_icons_flutter/material_design_icons_flutter.dart";
 import 'package:online_shopping/view/screens/profileScreen/profile_view.dart';
 import 'package:online_shopping/widgets/loader-shimmer-widgets/loader.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +11,7 @@ import '../../../resources/routes_manager.dart';
 import '../../../resources/values_manager.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -26,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     with AutomaticKeepAliveClientMixin<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLogged = Provider.of<AuthController>(context).isLogged;
     final authLoding = Provider.of<AuthController>(context).isLoading;
     return SafeArea(

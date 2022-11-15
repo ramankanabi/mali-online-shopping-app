@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
 import 'package:online_shopping/resources/color_manager.dart';
@@ -9,7 +8,6 @@ import 'package:online_shopping/view/screens/homeScreen/home_screen.dart';
 import 'package:online_shopping/view/screens/profileScreen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import "package:flutter_native_splash/flutter_native_splash.dart";
-import '../cacheManager/image_cache_manager.dart' as cache;
 import '../resources/routes_manager.dart';
 
 class Home extends StatefulWidget {
@@ -63,10 +61,9 @@ class _HomeState extends State<Home> {
           physics: const NeverScrollableScrollPhysics(),
           controller: pageController,
           onPageChanged: onPageChanged,
-          children: [
-            const HomeScreen(),
+          children: const [
+            HomeScreen(),
             FavouriteScreen(),
-            // CartScreen(),
             ProfileScreen(),
           ],
         ),
@@ -132,50 +129,6 @@ class _HomeState extends State<Home> {
           ),
         ),
       ]),
-      // floatingActionButton: Container(
-      //   width: 60,
-      //   height: 60,
-      //   child: FloatingActionButton(
-      //     backgroundColor: ColorManager.orange,
-      //     child: Icon(
-      //       CupertinoIcons.cart,
-      //       color: ColorManager.white,
-      //       size: 30,
-      //     ),
-      //     onPressed: () {},
-      //   ),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.,
-
-      // bottomNavigationBar: CupertinoTabBar(
-      //     currentIndex: pageIndex,
-      //     backgroundColor: ColorManager.primary,
-      //     onTap: onTap,
-      //     items: [
-      //       BottomNavigationBarItem(
-      //         icon: Icon(
-      //           CupertinoIcons.home,
-      //           color: ColorManager.lightGrey,
-      //         ),
-      //         activeIcon: Icon(CupertinoIcons.home, color: ColorManager.orange),
-      //       ),
-      //       BottomNavigationBarItem(
-      //         icon: Icon(
-      //           CupertinoIcons.heart,
-      //           color: ColorManager.lightGrey,
-      //         ),
-      //         activeIcon:
-      //             Icon(CupertinoIcons.heart_fill, color: ColorManager.orange),
-      //       ),
-      //       BottomNavigationBarItem(
-      //         icon: Icon(
-      //           CupertinoIcons.person,
-      //           color: ColorManager.lightGrey,
-      //         ),
-      //         activeIcon:
-      //             Icon(CupertinoIcons.person_fill, color: ColorManager.orange),
-      //       ),
-      //     ]),
     );
   }
 }

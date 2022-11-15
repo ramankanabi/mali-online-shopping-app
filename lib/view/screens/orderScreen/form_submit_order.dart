@@ -54,9 +54,7 @@ class _FormSubmitOrderState extends State<FormSubmitOrder> {
       setState(() {
         isLoading = false;
       });
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
   }
 
   final _cityList = [
@@ -218,7 +216,7 @@ class _FormSubmitOrderState extends State<FormSubmitOrder> {
                       const SizedBox(
                         height: 50,
                       ),
-                      PlaceOrderButtonWidget(),
+                      placeOrderButtonWidget(),
                     ],
                   ),
                 ),
@@ -230,7 +228,7 @@ class _FormSubmitOrderState extends State<FormSubmitOrder> {
     );
   }
 
-  Widget PlaceOrderButtonWidget() {
+  Widget placeOrderButtonWidget() {
     return ElevatedButton(
         onPressed: () async {
           final connectionStatus = await Connectivity().checkConnectivity();

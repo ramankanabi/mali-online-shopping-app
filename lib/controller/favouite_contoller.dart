@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:online_shopping/controller/auth_contoller.dart';
-import 'package:http/http.dart' as http;
 import 'package:online_shopping/model/favourite_model.dart';
 
 import '../apiService/dio_interceptors_wrapper.dart';
@@ -43,21 +41,17 @@ class FavouriteContoller with ChangeNotifier {
             "userId": userId,
             "productId": prodId,
           }));
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
   }
 
   Future<void> removeFavourite(String prodId, String userId) async {
     final url =
         "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId/product/$prodId";
     try {
-      final deleteFav = await getDio().delete(
+      await getDio().delete(
         url,
       );
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
   }
 
   Future<bool> getFavourite(String prodId, String userId) async {
@@ -77,28 +71,27 @@ class FavouriteContoller with ChangeNotifier {
   }
 
   Future getUserAllFavourites(String userId) async {
-    try {
-      _iasLoaing = true;
-      final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
+    // try {
+    _iasLoaing = true;
+    final url =
+        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
 
-      final favs = await getDio().get(url, options: dioOptions);
-      if (favs.statusCode != 404) {
-        final extractedData = favs.data["data"]["data"] as List;
+    final favs = await getDio().get(url, options: dioOptions);
+    if (favs.statusCode != 404) {
+      final extractedData = favs.data["data"]["data"] as List;
 
-        _favItems = extractedData
-            .map((prodData) => Favourite.fromJson(prodData))
-            .toList();
-        _iasLoaing = false;
-        notifyListeners();
-      }
-
-      return favs;
-    } catch (er) {
+      _favItems = extractedData
+          .map((prodData) => Favourite.fromJson(prodData))
+          .toList();
       _iasLoaing = false;
       notifyListeners();
-      print(er);
     }
+
+    return favs;
+    // } catch (er) {
+    //   _iasLoaing = false;
+    //   notifyListeners();
+    // }
   }
 
   resetItems() {

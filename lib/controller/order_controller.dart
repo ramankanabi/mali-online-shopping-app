@@ -2,13 +2,11 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:online_shopping/model/oder_model.dart';
 
 import '../apiService/dio_interceptors_wrapper.dart';
 import '../apiService/dio_options.dart';
 import '../model/cart_model.dart';
-import 'auth_contoller.dart';
 
 class OrderController with ChangeNotifier {
   final List<Map> _finalOrderList = [];
@@ -30,7 +28,7 @@ class OrderController with ChangeNotifier {
 
   prepareOrderList(List<Cart> cart) async {
     _finalOrderList.clear();
-    cart.forEach((el) {
+    for (var el in cart) {
       _finalOrderList.add({
         "productName": el.productName,
         "productId": el.productId,
@@ -40,7 +38,7 @@ class OrderController with ChangeNotifier {
         "price": el.price,
         "subTotalPrice": el.subTotalPrice,
       });
-    });
+    }
 
     notifyListeners();
   }
@@ -64,13 +62,11 @@ class OrderController with ChangeNotifier {
             "location": location
           }));
 
-      final deleteCurentCart = await getDio().delete(
+      await getDio().delete(
         cartUrl,
       );
       return order;
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
     return null;
   }
 
@@ -80,7 +76,6 @@ class OrderController with ChangeNotifier {
         "https://gentle-crag-94785.herokuapp.com/api/v1/orders/customer/$customerId";
     final response = await getDio().get(url, options: dioOptions);
     final orderList = response.data["data"]["data"] as List;
-    final generalData = response.data;
 
     for (var orderListData in orderList) {
       final products = orderListData["products"] as List;

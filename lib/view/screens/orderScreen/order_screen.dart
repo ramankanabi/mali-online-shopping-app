@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
 import 'package:online_shopping/controller/order_controller.dart';
 import 'package:online_shopping/resources/color_manager.dart';
@@ -13,11 +12,10 @@ import 'package:intl/intl.dart';
 
 import '../../../model/oder_model.dart';
 import '../../../resources/values_manager.dart';
-import '../../../widgets/slide_dots.dart';
 import "../../../cacheManager/image_cache_manager.dart" as cache;
 
 class OrderScreen extends StatefulWidget {
-  OrderScreen({Key? key}) : super(key: key);
+  const OrderScreen({Key? key}) : super(key: key);
 
   @override
   State<OrderScreen> createState() => _OrderScreenState();
@@ -71,14 +69,14 @@ class _OrderScreenState extends State<OrderScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            ProductsPreViewImage(
+                                            productsPreViewImage(
                                                 orderList[index], bxct),
                                             Expanded(
                                               child: SizedBox(
                                                 height: bxct.maxHeight * 0.75,
                                                 width: bxct.maxWidth,
                                                 child:
-                                                    GeneralInformationOfOrderWidget(
+                                                    generalInformationOfOrderWidget(
                                                         orderList[index]),
                                               ),
                                             ),
@@ -93,7 +91,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
-  Widget ProductsPreViewImage(List<Order> orderData, BoxConstraints bxct) {
+  Widget productsPreViewImage(List<Order> orderData, BoxConstraints bxct) {
     return Flexible(
       fit: FlexFit.loose,
       flex: 0,
@@ -120,7 +118,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) =>
-                              ProductViewDialog(context, orderData[i]),
+                              productViewDialog(context, orderData[i]),
                         );
                       },
                       child: Container(
@@ -150,7 +148,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
-  Widget ListTileItem(
+  Widget listTileItem(
     String title,
     String subTitle,
     IconData icon,
@@ -177,39 +175,39 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
-  Widget GeneralInformationOfOrderWidget(List<Order> orderData) {
+  Widget generalInformationOfOrderWidget(List<Order> orderData) {
     return Column(
       children: [
-        ListTileItem(
+        listTileItem(
           orderData[0].city,
           "city",
           CupertinoIcons.home,
         ),
-        ListTileItem(
+        listTileItem(
           orderData[0].phone,
           "phone",
           CupertinoIcons.phone,
         ),
-        ListTileItem(
+        listTileItem(
           DateFormat("yyyy-MM-dd")
               .format(DateTime.parse(orderData[0].orderDate))
               .toString(),
           "order date",
           CupertinoIcons.calendar_today,
         ),
-        ListTileItem(
+        listTileItem(
           DateFormat("yyyy-MM-dd")
               .format(DateTime.parse(orderData[0].arriveDate))
               .toString(),
           "arrive time",
           CupertinoIcons.time,
         ),
-        ListTileItem(
+        listTileItem(
           orderData[0].isArrived ? "arrived" : "in transit",
           "status",
           CupertinoIcons.cube_box,
         ),
-        ListTileItem(
+        listTileItem(
           "#${orderData[0].orderId}",
           "order id",
           CupertinoIcons.number,
@@ -218,7 +216,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
-  Widget ProductViewDialog(BuildContext context, Order orderData) {
+  Widget productViewDialog(BuildContext context, Order orderData) {
     return Dialog(
       elevation: 20,
       backgroundColor: Colors.transparent,
@@ -270,12 +268,12 @@ class _OrderScreenState extends State<OrderScreen> {
               const SizedBox(
                 height: 15,
               ),
-              ListTileItem(orderData.size, "size", Icons.space_bar),
-              ListTileItem(orderData.quantity.toString(), "quantity",
+              listTileItem(orderData.size, "size", Icons.space_bar),
+              listTileItem(orderData.quantity.toString(), "quantity",
                   CupertinoIcons.cart),
-              ListTileItem(orderData.price.toString(), "price",
+              listTileItem(orderData.price.toString(), "price",
                   Icons.attach_money_sharp),
-              ListTileItem(
+              listTileItem(
                 orderData.subTotalPrice.toString(),
                 "subTotal",
                 Icons.money,

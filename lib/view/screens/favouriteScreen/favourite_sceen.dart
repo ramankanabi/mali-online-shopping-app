@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import 'package:lottie/lottie.dart';
 import 'package:online_shopping/controller/favouite_contoller.dart';
 import 'package:online_shopping/resources/color_manager.dart';
 import 'package:online_shopping/resources/style_manager.dart';
@@ -9,11 +8,10 @@ import 'package:provider/provider.dart';
 import '../../../controller/auth_contoller.dart';
 import '../../../model/favourite_model.dart';
 import '../../../resources/font_manager.dart';
-import '../../../resources/routes_manager.dart';
 import '../../../widgets/favourite_item_wiget.dart';
 
 class FavouriteScreen extends StatefulWidget {
-  FavouriteScreen({Key? key}) : super(key: key);
+  const FavouriteScreen({Key? key}) : super(key: key);
 
   @override
   State<FavouriteScreen> createState() => _FavouriteScreenState();
@@ -61,6 +59,7 @@ class _FavouriteScreenState extends State<FavouriteScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLoading =
         Provider.of<FavouriteContoller>(context, listen: true).isLoading;
     final userFavourites =

@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:online_shopping/model/product_model.dart';
-import 'package:http/http.dart' as http;
 
 import '../apiService/dio_interceptors_wrapper.dart';
 import '../apiService/dio_options.dart';
@@ -35,9 +32,7 @@ class SearchController with ChangeNotifier {
       _searchList =
           extractedData.map((product) => Product.fromJson(product)).toList();
       return search;
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
 
     notifyListeners();
   }

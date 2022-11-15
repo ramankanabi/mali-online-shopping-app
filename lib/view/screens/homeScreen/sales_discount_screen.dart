@@ -49,6 +49,7 @@ class _SalesDiscountScreenState extends State<SalesDiscountScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: Scaffold(
@@ -68,7 +69,7 @@ class _SalesDiscountScreenState extends State<SalesDiscountScreen>
             } else if (productData.isNotEmpty) {
               return Padding(
                 padding: const EdgeInsets.all(AppPadding.p8),
-                child: GridViewProduct(productData),
+                child: gridViewProduct(productData),
               );
             } else {
               return const Loader();
@@ -79,7 +80,7 @@ class _SalesDiscountScreenState extends State<SalesDiscountScreen>
     );
   }
 
-  Widget GridViewProduct(List<Product> productData) {
+  Widget gridViewProduct(List<Product> productData) {
     return SingleChildScrollView(
       controller: gridViewController,
       child: Column(

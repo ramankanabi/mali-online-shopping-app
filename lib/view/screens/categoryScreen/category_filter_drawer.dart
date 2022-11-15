@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:online_shopping/controller/product_controller.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controller/filter_product_controller.dart';
@@ -16,29 +15,21 @@ class CategoryDrawer extends StatefulWidget {
 
 class _CategoryDrawerState extends State<CategoryDrawer> {
   List<dynamic> filterList = [];
+  String categoryFilter = '';
 
   final List categoryList = [
-    "Shoes",
-    "Bags",
-    "Clothes",
+    "shoes",
+    "bags",
+    "clothes",
     "eye glass",
-    "Jewelries",
-    "Makeups",
+    "jewelries",
+    "beauty",
   ];
-  List isSelectedList = [];
   @override
   void initState() {
-    final categoryFilterList =
+    categoryFilter =
         Provider.of<FilterProductController>(context, listen: false)
-            .filterList["category"];
-    isSelectedList = List.generate(categoryList.length, (i) {
-      if (categoryFilterList!.contains(categoryList[i])) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-    filterList = categoryFilterList!.toList();
+            .filterList["category"]!;
     super.initState();
   }
 
@@ -72,7 +63,7 @@ class _CategoryDrawerState extends State<CategoryDrawer> {
         InkWell(
           onTap: () {
             Provider.of<FilterProductController>(context, listen: false)
-                .addCategoryFilter(filterList);
+                .addCategoryFilter(categoryFilter);
 
             Navigator.pop(context);
           },
@@ -97,7 +88,7 @@ class _CategoryDrawerState extends State<CategoryDrawer> {
     return ListTile(
       title: Text(categoryName,
           style: getMediumStyle(
-              color: isSelectedList[index]
+              color: categoryName == categoryFilter
                   ? ColorManager.orange
                   : ColorManager.grey,
               fontSize: FontSize.s14)),
@@ -105,14 +96,11 @@ class _CategoryDrawerState extends State<CategoryDrawer> {
       focusColor: ColorManager.orange,
       hoverColor: ColorManager.orange.withOpacity(0.3),
       onTap: () {
-        isSelectedList[index] = !isSelectedList[index];
-        if (isSelectedList[index]) {
-          filterList.add(categoryName);
+        if (categoryFilter == categoryName) {
+          categoryFilter = '';
         } else {
-          filterList.remove(categoryName);
+          categoryFilter = categoryName;
         }
-        print(filterList.length);
-        print(isSelectedList[index]);
 
         setState(() {});
       },

@@ -11,7 +11,6 @@ import 'package:online_shopping/widgets/loader-shimmer-widgets/loader.dart';
 import 'package:provider/provider.dart';
 import '../../../controller/filter_product_controller.dart';
 import '../../../model/product_model.dart';
-import '../../../resources/font_manager.dart';
 import '../../../widgets/product_item_widget.dart';
 import 'filter_drawer.dart';
 
@@ -30,17 +29,28 @@ class _CategoryScreenState extends State<CategoryScreen>
   bool isInit = true;
   bool isFilter = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  String query = "r";
+
+  @override
+  void didChangeDependencies() {
+    query =
+        Provider.of<FilterProductController>(context, listen: true).getQuery();
+    super.didChangeDependencies();
+  }
+
   @override
   void initState() {
+    query =
+        Provider.of<FilterProductController>(context, listen: false).getQuery();
     _future = Provider.of<ProductContoller>(context, listen: false)
-        .fetchCategoryProductData(widget.categoryName);
+        .fetchCategoryProductData(query);
 
     gridViewController.addListener(() async {
-      if (gridViewController.position.extentAfter < 50) {
+      if (gridViewController.position.extentAfter < 400) {
         if (isInit == true) {
           isInit = false;
           await Provider.of<ProductContoller>(context, listen: false)
-              .categoryloadMore(widget.categoryName)
+              .categoryloadMore(query)
               .then((_) {
             isInit = true;
           });
@@ -53,13 +63,13 @@ class _CategoryScreenState extends State<CategoryScreen>
   Future _onRefresh() async {
     Provider.of<ProductContoller>(context, listen: false)
         .resetCategoryProductItem();
-
     await Provider.of<ProductContoller>(context, listen: false)
-        .fetchCategoryProductData(widget.categoryName);
+        .fetchCategoryProductData(query);
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isFiltered =
         Provider.of<FilterProductController>(context, listen: true)
             .getFilterStatus();

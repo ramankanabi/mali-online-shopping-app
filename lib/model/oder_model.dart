@@ -1,5 +1,3 @@
-import 'package:online_shopping/controller/auth_contoller.dart';
-
 class Order {
   final String customerId;
   final String productName;

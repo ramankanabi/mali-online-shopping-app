@@ -3,18 +3,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:online_shopping/resources/color_manager.dart';
-import 'package:online_shopping/resources/font_manager.dart';
-import 'package:online_shopping/resources/style_manager.dart';
 import 'package:online_shopping/resources/values_manager.dart';
 import 'package:shimmer/shimmer.dart';
 
+// ignore: must_be_immutable
 class ProductViewPageLoader extends StatelessWidget {
   bool isInit = true;
   bool isLoading = false;
   int pageIndex = 0;
-  // late Future _future;
   bool isFav = false;
   int productFavCount = 0;
+
+  ProductViewPageLoader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,26 +27,26 @@ class ProductViewPageLoader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ImageCover(),
+                imageCover(),
                 NamePriceFav(),
                 SizedBox(
                   height: AppSize.s70,
                   width: double.infinity,
-                  child: SizeView(
+                  child: sizeView(
                     context,
                   ),
                 ),
                 SizedBox(
                   height: AppSize.s100,
                   width: double.infinity,
-                  child: ColorView(
+                  child: colorView(
                     context,
                   ),
                 ),
                 SizedBox(
                   height: 15,
                 ),
-                DescriptionView(
+                descriptionView(
                   context,
                 ),
               ],
@@ -96,7 +96,7 @@ class ProductViewPageLoader extends StatelessWidget {
     );
   }
 
-  Widget ImageCover() {
+  Widget imageCover() {
     return Shimmer.fromColors(
       baseColor: ColorManager.shimmerBaseColor,
       highlightColor: ColorManager.shimmerHighlightColor,
@@ -108,7 +108,7 @@ class ProductViewPageLoader extends StatelessWidget {
     );
   }
 
-  Widget SizeView(BuildContext context) {
+  Widget sizeView(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Shimmer.fromColors(
         baseColor: ColorManager.shimmerBaseColor,
@@ -144,7 +144,7 @@ class ProductViewPageLoader extends StatelessWidget {
     ]);
   }
 
-  Widget ColorView(BuildContext context) {
+  Widget colorView(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -184,7 +184,7 @@ class ProductViewPageLoader extends StatelessWidget {
     );
   }
 
-  Widget DescriptionView(BuildContext context) {
+  Widget descriptionView(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

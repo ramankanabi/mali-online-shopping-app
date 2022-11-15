@@ -1,25 +1,29 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:online_shopping/resources/color_manager.dart';
+import 'package:online_shopping/resources/font_manager.dart';
 import 'package:online_shopping/resources/style_manager.dart';
 
-void main() => runApp(TimeCouuntDown());
-
 class TimeCouuntDown extends StatefulWidget {
+  final int secondsToEnd;
+  const TimeCouuntDown(this.secondsToEnd, {super.key});
   @override
+  // ignore: library_private_types_in_public_api
   _TimeCouuntDownState createState() => _TimeCouuntDownState();
 }
 
-class _TimeCouuntDownState extends State<TimeCouuntDown> {
-  static const duration = const Duration(seconds: 1);
+class _TimeCouuntDownState extends State<TimeCouuntDown>
+    with AutomaticKeepAliveClientMixin {
+  static const duration = Duration(seconds: 1);
 
-  int secondsPassed = 86400;
-  bool isActive = false;
-  int? seconds;
+  late int secondsPassed;
+  int seconds = 59;
   int minutes = 59;
-  int? hours;
-  int? days;
+  int hours = 24;
+  int days = 0;
 
   late Timer timer;
   void handleTick() {
@@ -30,32 +34,41 @@ class _TimeCouuntDownState extends State<TimeCouuntDown> {
       seconds = secondsPassed % 60;
       hours = secondsPassed ~/ (60 * 60);
       days = secondsPassed ~/ (24 * 60 * 60);
-
-      if (seconds == 0) {
-        minutes--;
-      }
-      if (minutes < 0) {
-        minutes = 59;
+      if (hours < 0) {
+        hours = 0;
+        seconds = 0;
+        minutes = 0;
+        setState(() {});
+        timer.cancel();
+      } else {
+        if (seconds == 0) {
+          minutes--;
+        }
+        if (minutes < 0) {
+          minutes = 59;
+        }
       }
     }
   }
 
-  bool isInit = true;
   @override
-  void didChangeDependencies() {
-    if (isInit) {
-      timer = Timer.periodic(duration, (_) {
-        handleTick();
-      });
-    }
-    setState(() {
-      isInit = false;
+  void initState() {
+    secondsPassed = widget.secondsToEnd;
+
+    timer = Timer.periodic(duration, (_) {
+      handleTick();
     });
-    super.didChangeDependencies();
+
+    setState(() {
+      hours = 0;
+    });
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -70,7 +83,7 @@ class _TimeCouuntDownState extends State<TimeCouuntDown> {
                 LabelText(
                     label: 'Min', value: minutes.toString().padLeft(2, '0')),
                 LabelText(
-                    label: 'SEC', value: seconds.toString().padLeft(2, '0')),
+                    label: 'Sec', value: seconds.toString().padLeft(2, '0')),
               ],
             ),
           ),
@@ -83,8 +96,8 @@ class _TimeCouuntDownState extends State<TimeCouuntDown> {
   Widget LabelText({required String label, required String value}) {
     return Container(
       alignment: Alignment.center,
-      width: 40,
-      height: 40,
+      width: 45,
+      height: 60,
       margin: const EdgeInsets.symmetric(horizontal: 5),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -92,20 +105,24 @@ class _TimeCouuntDownState extends State<TimeCouuntDown> {
           color: ColorManager.white,
           border: Border.all(width: 0.1)),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        // mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Text(
-            value,
+            hours == null && minutes == null && seconds == null ? "" : value,
             style: getBoldStyle(
-              color: ColorManager.primary,
-            ),
+                color: ColorManager.primary, fontSize: FontSize.s16),
           ),
-          // Text(
-          //   label,
-          //   style: TextStyle(color: ColorManager.primary, fontSize: 10),
-          // ),
+          Text(
+            label,
+            style:
+                TextStyle(color: ColorManager.primary, fontSize: FontSize.s10),
+          ),
         ],
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

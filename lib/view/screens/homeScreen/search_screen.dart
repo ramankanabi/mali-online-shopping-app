@@ -4,10 +4,8 @@ import 'package:online_shopping/controller/search_controller.dart';
 import 'package:online_shopping/model/product_model.dart';
 import 'package:online_shopping/resources/color_manager.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../resources/font_manager.dart';
-import '../../../resources/routes_manager.dart';
 import '../../../resources/style_manager.dart';
 import '../../../resources/values_manager.dart';
 import '../../../widgets/loader-shimmer-widgets/search_item_loader.dart';
@@ -21,7 +19,6 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late Future _future;
   final _searchController = TextEditingController();
   List<Product> searchList = [];
   bool isLoading = false;
@@ -34,8 +31,10 @@ class _SearchScreenState extends State<SearchScreen> {
     await Provider.of<SearchController>(context, listen: false)
         .getSearchResult(value.trim());
 
-    searchList =
-        Provider.of<SearchController>(context, listen: false).searchList;
+    if (mounted) {
+      searchList =
+          Provider.of<SearchController>(context, listen: false).searchList;
+    }
     setState(() {
       isLoading = false;
     });

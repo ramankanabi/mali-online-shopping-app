@@ -1,58 +1,51 @@
 import 'package:flutter/material.dart';
 
 class FilterProductController with ChangeNotifier {
-  Map<String, List> _filterList = {"category": [], "price": [], "color": []};
-  Map<String, List> get filterList => _filterList;
+  Map<String, String> _filterList = {
+    "category": "",
+    "minPrice": "",
+    "maxPrice": "",
+    "color": ''
+  };
+  Map<String, String> get filterList => _filterList;
 
-  final String _query = "";
-  addCategoryFilter(List categoryFilterList) {
-    _filterList["category"] = categoryFilterList;
+  addCategoryFilter(String categoryFilter) {
+    _filterList["category"] = categoryFilter;
     notifyListeners();
   }
 
   String _getCategoryFilter() {
     String categoryFilter = '';
 
-    filterList["category"]?.forEach((element) {
-      categoryFilter = "${categoryFilter + element},";
-    });
+    categoryFilter = filterList["category"]!;
 
-    if (categoryFilter.isNotEmpty) {
-      categoryFilter = categoryFilter.substring(0, categoryFilter.length - 1);
+    if (categoryFilter != '') {
       return "category=$categoryFilter&".toLowerCase();
     } else {
       return "";
     }
   }
 
-  addPriceFilter(List priceFilterList) {
-    _filterList["price"] = priceFilterList;
+  addPriceFilter(String minPriceFilter, String maxPriceFilter) {
+    _filterList["maxPrice"] = maxPriceFilter;
+    _filterList["minPrice"] = minPriceFilter;
     notifyListeners();
   }
 
   String _getPriceFilter() {
-    Map<String, String> priceFilter = {
-      "min": "",
-      "max": "",
-    };
-    if (filterList["price"]!.isNotEmpty) {
-      String min = filterList["price"]?[0];
-      String max = filterList["price"]?[1] != ''
-          ? filterList["price"]![1]
-          : "9999999999";
-      priceFilter = {
-        "min": min,
-        "max": max,
-      };
-      print(
-          "customerPrice[gte]=${priceFilter["min"]}&customerPrice[lte]=${priceFilter["max"]}&");
-      return "customerPrice[gte]=${priceFilter["min"]}&customerPrice[lte]=${priceFilter["max"]}&";
-    } else {
-      return "";
+    String query = '';
+    if (filterList["minPrice"] != '') {
+      String min = filterList["minPrice"]!;
+      query = "customerPrice[gte]=$min&";
     }
+    if (filterList["maxPrice"] != '') {
+      String max = filterList["maxPrice"]!;
+      query = "${query}customerPrice[lte]=$max&";
+    }
+    return query;
   }
 
-  addColorFilter(List colorFilterList) {
+  addColorFilter(String colorFilterList) {
     _filterList["color"] = colorFilterList;
     notifyListeners();
   }
@@ -60,15 +53,11 @@ class FilterProductController with ChangeNotifier {
   String _getColorFilter() {
     String colorFilter = '';
 
-    filterList["color"]?.forEach((element) {
-      colorFilter = "${colorFilter + element},";
-    });
-
-    if (colorFilter.isNotEmpty) {
-      colorFilter = colorFilter.substring(0, colorFilter.length - 1);
+    colorFilter = filterList["color"]!;
+    if (colorFilter != '') {
       return "color=$colorFilter&".toLowerCase();
     } else {
-      return "";
+      return '';
     }
   }
 
@@ -78,14 +67,14 @@ class FilterProductController with ChangeNotifier {
     while (query.endsWith("&")) {
       query = query.substring(0, query.length - 1);
     }
-
     return query;
   }
 
   bool getFilterStatus() {
-    if (_filterList["category"]!.isEmpty &&
-        _filterList["price"]!.isEmpty &&
-        _filterList["color"]!.isEmpty) {
+    if (_filterList["category"] == '' &&
+        _filterList["maxPrice"] == '' &&
+        _filterList["minPrice"] == '' &&
+        _filterList["color"] == "") {
       return false;
     } else {
       return true;
@@ -94,9 +83,10 @@ class FilterProductController with ChangeNotifier {
 
   clearFilter() {
     _filterList = {
-      "category": [],
-      "price": [],
-      "color": [],
+      "category": '',
+      "maxPrice": '',
+      "minPrice": '',
+      "color": '',
     };
     notifyListeners();
   }

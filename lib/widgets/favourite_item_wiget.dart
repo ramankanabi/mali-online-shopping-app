@@ -40,44 +40,83 @@ class _FavouriteItemWidgetState extends State<FavouriteItemWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        final favStatus = await Navigator.pushNamed(
-            context, Routes.productViewScreen,
-            arguments: [favourite.prodId]);
-        setState(() {
-          _isFav = favStatus.toString() == "true";
-        });
-      },
-      child: Card(
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-              height: AppSize.s100,
-              width: MediaQuery.of(context).size.width,
-              child: LayoutBuilder(builder: (context, bxct) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        ImageWidget(bxct),
-                        const SizedBox(
-                          width: 10,
+        onTap: () async {
+          final favStatus = await Navigator.pushNamed(
+              context, Routes.productViewScreen,
+              arguments: [favourite.prodId]);
+          setState(() {
+            _isFav = favStatus.toString() == "true";
+          });
+        },
+        child: Card(
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(AppPadding.p8),
+            child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: AppSize.s100,
+                child: LayoutBuilder(
+                  builder: (context, bxct) {
+                    return Row(children: [
+                      Container(
+                        child: imageWidget(bxct),
+                      ),
+                      Expanded(
+                        child: Container(
+                          color: ColorManager.white,
+                          child: Stack(children: [
+                            Positioned(
+                              top: 10,
+                              left: 5,
+                              child: nameAndPriceWidget(),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: favouriteAndCartButtonWidget(),
+                            )
+                          ]),
                         ),
-                        NameAndPriceWidget(),
-                      ],
-                    ),
-                    FavouriteAndCartButtonWidget(),
-                  ],
-                );
-              })),
-        ),
-      ),
-    );
+                      ),
+                    ]);
+                  },
+                )),
+          ),
+        )
+
+        //  Card(
+        //   elevation: 2,
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(8.0),
+        //     child: SizedBox(
+        //         height: AppSize.s100,
+        //         width: MediaQuery.of(context).size.width - 20,
+        //         child: LayoutBuilder(builder: (context, bxct) {
+        //           return Row(
+        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //             children: [
+        //               SizedBox(
+        //                 width: 200,
+        //                 child: Row(
+        //                   children: [
+        //                     imageWidget(bxct),
+        //                     const SizedBox(
+        //                       width: 10,
+        //                     ),
+        //                     nameAndPriceWidget(),
+        //                   ],
+        //                 ),
+        //               ),
+        //               favouriteAndCartButtonWidget(),
+        //             ],
+        //           );
+        //         })),
+        //   ),
+        // ),
+        );
   }
 
-  Widget ImageWidget(BoxConstraints bxct) {
+  Widget imageWidget(BoxConstraints bxct) {
     return SizedBox(
       width: bxct.maxWidth * 0.25,
       height: bxct.maxHeight,
@@ -89,15 +128,17 @@ class _FavouriteItemWidgetState extends State<FavouriteItemWidget> {
     );
   }
 
-  Widget NameAndPriceWidget() {
+  Widget nameAndPriceWidget() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          favourite.name.toString(),
+          favourite.name,
           style: getMediumStyle(
               color: ColorManager.primary, fontSize: FontSize.s18),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
         ),
         const SizedBox(
           height: 4,
@@ -167,15 +208,11 @@ class _FavouriteItemWidgetState extends State<FavouriteItemWidget> {
     );
   }
 
-  Widget FavouriteAndCartButtonWidget() {
+  Widget favouriteAndCartButtonWidget() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Icon(
-          Icons.more_vert_outlined,
-          color: ColorManager.grey,
-        ),
         Row(
           children: [
             IconButton(
@@ -202,45 +239,49 @@ class _FavouriteItemWidgetState extends State<FavouriteItemWidget> {
                   color: ColorManager.orange),
             ),
             Container(
-              height: 30,
-              width: 100,
+              height: AppSize.s30,
+              width: AppSize.s100,
               color: ColorManager.primary,
               child: ElevatedButton(
-                  onPressed: () async {
-                    final connectionStatus =
-                        await Connectivity().checkConnectivity();
-                    if (connectionStatus == ConnectivityResult.none) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Cheack internet connection"),
-                        ),
-                      );
-                    } else {
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        barrierColor: Colors.black87,
-                        builder: (context) => SizedBox(
-                          height: MediaQuery.of(context).size.height / 2,
-                          child: ShowModalBottomSheet(
-                            product: Product(
-                              prodId: favourite.prodId,
-                              size: favourite.size,
-                              quantity: favourite.quantity,
-                              price: favourite.price,
-                              name: favourite.name,
-                              images: favourite.images,
-                            ),
+                onPressed: () async {
+                  final connectionStatus =
+                      await Connectivity().checkConnectivity();
+                  if (connectionStatus == ConnectivityResult.none) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Cheack internet connection"),
+                      ),
+                    );
+                  } else {
+                    showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      barrierColor: Colors.black87,
+                      builder: (context) => SizedBox(
+                        height: MediaQuery.of(context).size.height / 2,
+                        child: ShowModalBottomSheet(
+                          product: Product(
+                            prodId: favourite.prodId,
+                            size: favourite.size,
+                            quantity: favourite.quantity,
+                            price: favourite.price,
+                            name: favourite.name,
+                            images: favourite.images,
                           ),
                         ),
-                      );
-                    }
-                  },
-                  child: Text(
-                    "Add to cart",
-                    style: getMediumStyle(
-                        color: ColorManager.white, fontSize: FontSize.s12),
-                  )),
+                      ),
+                    );
+                  }
+                },
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(ColorManager.primary)),
+                child: Text(
+                  "Add to cart",
+                  style: getMediumStyle(
+                      color: ColorManager.white, fontSize: FontSize.s12),
+                ),
+              ),
             ),
           ],
         ),

@@ -69,16 +69,16 @@ class _ProfileViewState extends State<ProfileView> {
                   const SizedBox(
                     height: AppSize.s20,
                   ),
-                  OverViewCard(context),
-                  MoreCard(context),
-                  LogOutCard(context),
+                  overViewCard(context),
+                  moreCard(context),
+                  logOutCard(context),
                 ]),
               ),
             ),
     );
   }
 
-  Widget OverViewCard(BuildContext context) {
+  Widget overViewCard(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -127,7 +127,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget MoreCard(BuildContext context) {
+  Widget moreCard(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -190,7 +190,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget LogOutCard(BuildContext context) {
+  Widget logOutCard(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),

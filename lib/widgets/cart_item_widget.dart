@@ -24,6 +24,7 @@ class _CartItemState extends State<CartItem>
     with AutomaticKeepAliveClientMixin {
   late Cart cart;
   late int quantity;
+  late double subTotal;
   bool isLoading = false;
   bool isRemoved = false;
   late Future _future;
@@ -37,6 +38,7 @@ class _CartItemState extends State<CartItem>
   void initState() {
     cart = widget.cart;
     quantity = cart.quantity;
+    subTotal = cart.subTotalPrice!.toDouble();
     _future = Provider.of<FavouriteContoller>(context, listen: false)
         .getFavourite(cart.productId, cart.customerId);
     super.initState();
@@ -44,6 +46,7 @@ class _CartItemState extends State<CartItem>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return isRemoved
         ? Container()
         : FutureBuilder(
@@ -75,7 +78,7 @@ class _CartItemState extends State<CartItem>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(children: [
-                                    ImageWidget(),
+                                    imageWidget(),
                                     const SizedBox(
                                       width: 10,
                                     ),
@@ -95,7 +98,7 @@ class _CartItemState extends State<CartItem>
                                           height: 4,
                                         ),
                                         Text(
-                                          cart.subTotalPrice.toString(),
+                                          subTotal.toString(),
                                           style: getMediumStyle(
                                               color: ColorManager.orange,
                                               fontSize: FontSize.s16),
@@ -127,7 +130,7 @@ class _CartItemState extends State<CartItem>
                                           size: 20,
                                         ),
                                       ),
-                                      QuantityWidget(),
+                                      quantityWidget(),
                                     ],
                                   )
                                 ],
@@ -162,6 +165,7 @@ class _CartItemState extends State<CartItem>
         });
         await Provider.of<CartController>(context, listen: false)
             .updateQuantity(cart.objectId, quantity);
+        subTotal = quantity * cart.price;
         setState(() {
           isLoading = false;
         });
@@ -182,6 +186,7 @@ class _CartItemState extends State<CartItem>
         });
         await Provider.of<CartController>(context, listen: false)
             .updateQuantity(cart.objectId, quantity);
+        subTotal = quantity * cart.price;
         setState(() {
           isLoading = false;
         });
@@ -193,7 +198,7 @@ class _CartItemState extends State<CartItem>
     }
   }
 
-  Widget QuantityWidget() {
+  Widget quantityWidget() {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.r15),
@@ -262,7 +267,7 @@ class _CartItemState extends State<CartItem>
   @override
   bool get wantKeepAlive => true;
 
-  Widget ImageWidget() {
+  Widget imageWidget() {
     return CachedNetworkImage(
       imageUrl: cart.images[0],
       fit: BoxFit.cover,

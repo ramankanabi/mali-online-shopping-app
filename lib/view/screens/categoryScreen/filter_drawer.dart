@@ -27,20 +27,18 @@ class _FilterDrawerState extends State<FilterDrawer> {
   );
 
   Widget get drawer => _drawer;
-  Map<String, List> filterList = {
-    "category": [],
-    "price": [],
-    "color": [],
-  };
 
   @override
   Widget build(BuildContext context) {
-    final categoryFilterList =
+    final categoryFilter =
         Provider.of<FilterProductController>(context).filterList["category"];
-    final priceFilterList =
-        Provider.of<FilterProductController>(context).filterList["price"];
-    final colorFilterList =
+    final maxPriceFilter =
+        Provider.of<FilterProductController>(context).filterList["maxPrice"];
+    final minPriceFilter =
+        Provider.of<FilterProductController>(context).filterList["minPrice"];
+    final colorFilter =
         Provider.of<FilterProductController>(context).filterList["color"];
+    String priceFilter = "$minPriceFilter ~ $maxPriceFilter";
     return Drawer(
       child: Scaffold(
         key: _scaffoldKey,
@@ -60,15 +58,8 @@ class _FilterDrawerState extends State<FilterDrawer> {
                   elevation: 0.2,
                   actions: [
                     TextButton(
-                        onPressed: () async {
-                          Provider.of<FilterProductController>(context,
-                                  listen: false)
-                              .clearFilter();
-                          Provider.of<ProductContoller>(context, listen: false)
-                              .resetCategoryProductItem();
-                          await Provider.of<ProductContoller>(context,
-                                  listen: false)
-                              .fetchCategoryProductData(widget.categoryName);
+                        onPressed: () {
+                          clearFilter();
                         },
                         child: Text(
                           "clear",
@@ -76,28 +67,21 @@ class _FilterDrawerState extends State<FilterDrawer> {
                         ))
                   ],
                 ),
-                FilterListTile("Category", categoryFilterList!, () {
+                FilterListTile("Category", categoryFilter!, () {
                   openDrawer(const CategoryDrawer());
                 }),
-                FilterListTile("Price", priceFilterList!, () {
+                FilterListTile("Price", priceFilter == " ~ " ? "" : priceFilter,
+                    () {
                   openDrawer(const PriceDrawer());
                 }),
-                FilterListTile("Color", colorFilterList!, () {
+                FilterListTile("Color", colorFilter!, () {
                   openDrawer(const ColorDrawer());
                 }),
               ],
             ),
             InkWell(
               onTap: () {
-                final query =
-                    Provider.of<FilterProductController>(context, listen: false)
-                        .getQuery();
-                Provider.of<ProductContoller>(context, listen: false)
-                    .resetCategoryProductItem();
-                Provider.of<ProductContoller>(context, listen: false)
-                    .fetchFilteredCategoryProductData(query);
-
-                Navigator.pop(context);
+                applyFilter();
               },
               child: Container(
                 alignment: Alignment.center,
@@ -118,20 +102,15 @@ class _FilterDrawerState extends State<FilterDrawer> {
     );
   }
 
-  Widget FilterListTile(String title, List filters, Function onPress) {
-    String subtitle = "";
-    for (var e in filters) {
-      subtitle = "${subtitle + e} ";
-    }
-
+  Widget FilterListTile(String title, String filter, Function onPress) {
     return ListTile(
       title: Text(title,
           style: getMediumStyle(
               color: ColorManager.darkGrey, fontSize: FontSize.s14)),
-      subtitle: subtitle.isEmpty
+      subtitle: filter.isEmpty
           ? null
           : Text(
-              subtitle,
+              filter,
               style: getRegularStyle(color: ColorManager.orange),
             ),
       trailing: IconButton(
@@ -148,5 +127,28 @@ class _FilterDrawerState extends State<FilterDrawer> {
     _drawer = drawer;
     setState(() {});
     _scaffoldKey.currentState?.openEndDrawer();
+  }
+
+  void clearFilter() {
+    Provider.of<FilterProductController>(context, listen: false).clearFilter();
+    final query =
+        Provider.of<FilterProductController>(context, listen: false).getQuery();
+    Provider.of<ProductContoller>(context, listen: false)
+        .resetCategoryProductItem();
+    Provider.of<ProductContoller>(context, listen: false)
+        .fetchCategoryProductData(query);
+    Navigator.pop(context);
+  }
+
+  void applyFilter() {
+    final query =
+        Provider.of<FilterProductController>(context, listen: false).getQuery();
+
+    Provider.of<ProductContoller>(context, listen: false)
+        .resetCategoryProductItem();
+    Provider.of<ProductContoller>(context, listen: false)
+        .fetchCategoryProductData(query);
+
+    Navigator.pop(context);
   }
 }

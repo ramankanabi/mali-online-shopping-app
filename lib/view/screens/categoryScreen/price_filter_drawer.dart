@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:online_shopping/controller/product_controller.dart';
 import 'package:online_shopping/resources/values_manager.dart';
 import 'package:provider/provider.dart';
 
@@ -16,22 +15,24 @@ class PriceDrawer extends StatefulWidget {
 }
 
 class _PriceDrawerState extends State<PriceDrawer> {
-  List<dynamic> filterList = [];
   final minController = TextEditingController();
   final maxController = TextEditingController();
+  String minPrice = '';
+  String maxPrice = '';
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    List PriceFilterList =
-        Provider.of<FilterProductController>(context, listen: false)
-            .filterList["price"]!
-            .toList();
+    maxPrice = Provider.of<FilterProductController>(context, listen: false)
+        .filterList["maxPrice"]!;
+    minPrice = Provider.of<FilterProductController>(context, listen: false)
+        .filterList["minPrice"]!;
 
-    filterList = PriceFilterList;
-    if (filterList.isNotEmpty) {
-      minController.text = filterList[0];
-      maxController.text = filterList[1];
+    if (maxPrice != '') {
+      maxController.text = maxPrice;
+    }
+    if (minPrice != '') {
+      minController.text = minPrice;
     }
     super.initState();
   }
@@ -58,10 +59,11 @@ class _PriceDrawerState extends State<PriceDrawer> {
     if (isValid == false || isValid == null) {
       return;
     }
-    filterList = [minController.text, maxController.text];
+    minPrice = minController.text;
+    maxPrice = maxController.text;
 
     Provider.of<FilterProductController>(context, listen: false)
-        .addPriceFilter(filterList);
+        .addPriceFilter(minPrice, maxPrice);
     Navigator.pop(context);
   }
 
@@ -169,7 +171,7 @@ class _PriceDrawerState extends State<PriceDrawer> {
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: ColorManager.grey, width: 1),
           ),
-          errorBorder: OutlineInputBorder(
+          errorBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.red, width: 1),
           ),
           errorMaxLines: 5,

@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:online_shopping/model/user_model.dart';
 
 import '../apiService/dio_interceptors_wrapper.dart';
@@ -42,9 +39,7 @@ class UserController with ChangeNotifier {
           phoneNumber: extractedData["data"]["user"]["phoneNumber"],
           city: extractedData["data"]["user"]["city"],
           birthYear: extractedData["data"]["user"]["birthYear"]);
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
     _isLoading = false;
     notifyListeners();
   }

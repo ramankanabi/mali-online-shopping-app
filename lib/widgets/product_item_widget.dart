@@ -2,7 +2,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:online_shopping/cacheManager/image_cache_manager.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
 import 'package:online_shopping/controller/favouite_contoller.dart';
 import 'package:online_shopping/resources/routes_manager.dart';
@@ -63,6 +62,7 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLogged =
         Provider.of<AuthController>(context, listen: true).isLogged;
 
@@ -89,11 +89,11 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
                               const Icon(Icons.error),
                           fit: BoxFit.cover,
                           width: bxcst.maxWidth,
-                          height: bxcst.maxHeight,
+                          height: bxcst.maxHeight * 0.7,
                           cacheManager: cache.ImageCacheManager().cacheManager),
                       if (product.priceDiscount != 0) ...{
                         Banner(
-                          message: "discount",
+                          message: "SALE",
                           location: BannerLocation.topStart,
                           color: ColorManager.primaryOpacity70,
                           textStyle: getBoldStyle(
@@ -164,9 +164,11 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
               product.name,
               style: getBoldStyle(
                   color: ColorManager.grey, fontSize: FontSize.s16),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
-              "Tis is the mavi T-shirt can be use for childreen",
+              product.discreption_EN.toString(),
               style: getRegularStyle(
                   color: ColorManager.lightGrey, fontSize: FontSize.s12),
               overflow: TextOverflow.ellipsis,
@@ -245,7 +247,5 @@ class _ProductItemWidgetState extends State<ProductItemWidget>
   }
 
   @override
-  // TODO: implement wantKeepAliv
-  // e
   bool get wantKeepAlive => true;
 }

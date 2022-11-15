@@ -51,7 +51,7 @@ class CartController with ChangeNotifier {
       }).catchError((err) async {
         if (err.toString().contains("404")) {
           const url = "https://gentle-crag-94785.herokuapp.com/api/v1/carts";
-          final _cart = await getDio().post(
+          await getDio().post(
             url,
             data: jsonEncode(
               {
@@ -89,14 +89,12 @@ class CartController with ChangeNotifier {
 
       _totalPrice =
           cart.data["priceCalculation"][0]["subTotalPrice"].toDouble();
-      print(_cart.length);
 
       _cart = extractedData.map((el) => Cart.fromJson(el, customerId)).toList();
       notifyListeners();
       return cart;
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
+    return null;
   }
 
   Future<void> updateQuantity(String objectId, int quantity) async {

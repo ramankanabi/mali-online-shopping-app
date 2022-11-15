@@ -4,7 +4,6 @@ class Favourite {
   final int price;
   final int? priceDiscount;
   final List<dynamic> images;
-  final bool isAvailable;
   final List size;
   final int quantity;
 
@@ -14,7 +13,6 @@ class Favourite {
     required this.price,
     required this.priceDiscount,
     required this.images,
-    required this.isAvailable,
     required this.quantity,
     required this.size,
   });
@@ -25,7 +23,6 @@ class Favourite {
       prodId: extractedData["productId"],
       price: extractedData["product"][0]["customerPrice"],
       images: extractedData["product"][0]["images"],
-      isAvailable: extractedData["product"][0]["isAvailable"],
       size: extractedData["product"][0]["size"],
       quantity: extractedData["product"][0]["quantity"],
       priceDiscount: extractedData["product"][0]["priceDiscount"],

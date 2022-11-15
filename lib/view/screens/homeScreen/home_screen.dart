@@ -1,15 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:online_shopping/cacheManager/image_cache_manager.dart';
 import 'package:online_shopping/controller/product_controller.dart';
+import 'package:online_shopping/resources/assets_manager.dart';
 import 'package:online_shopping/resources/color_manager.dart';
 import 'package:online_shopping/resources/font_manager.dart';
 import 'package:online_shopping/resources/values_manager.dart';
+import 'package:online_shopping/widgets/advertise_home_screen_widget.dart';
 import 'package:online_shopping/widgets/circle_category_widget.dart';
 import 'package:online_shopping/widgets/loader-shimmer-widgets/loader.dart';
-import 'package:online_shopping/widgets/slide_dots.dart';
-import 'package:online_shopping/widgets/time_countdown_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../model/product_model.dart';
 import '../../../resources/routes_manager.dart';
@@ -27,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin<HomeScreen> {
   bool isInit = true;
   bool isLoading = false;
-  int advertisePageIndex = 0;
+
   bool isLoadMore = false;
   ScrollController gridViewController = ScrollController();
   late List<Product> productData;
@@ -35,11 +34,10 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    ImageCacheManager().getImageCache();
     _future = Provider.of<ProductContoller>(context, listen: false)
         .fetchProductData();
     gridViewController.addListener(() async {
-      if (gridViewController.position.extentAfter < 50) {
+      if (gridViewController.position.extentAfter < 400) {
         if (isInit == true) {
           isInit = false;
           Provider.of<ProductContoller>(context, listen: false)
@@ -52,24 +50,17 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  onChangedPage(int index) {
-    setState(() {
-      advertisePageIndex = index;
-    });
-  }
-
   Future onRefresh() async {
     try {
       await Provider.of<ProductContoller>(context, listen: false).resetItem();
       await Provider.of<ProductContoller>(context, listen: false)
           .fetchProductData();
-    } catch (er) {
-      print(er);
-    }
+    } catch (er) {}
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: onRefresh,
@@ -104,18 +95,18 @@ class _HomeScreenState extends State<HomeScreen>
                     const SizedBox(
                       height: AppSize.s20,
                     ),
-                    AdvertiseView(),
+                    const AdvertiseHomeScreenWidget(),
                     const SizedBox(
                       height: 40,
                     ),
-                    SearchBar(),
+                    searchBar(),
                     const SizedBox(
                       height: AppSize.s40,
                     ),
                     SizedBox(
                       width: double.infinity,
                       height: AppSize.s150,
-                      child: Categories(),
+                      child: categories(),
                     ),
                     Container(
                       alignment: Alignment.topLeft,
@@ -132,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen>
                             child: CircularProgressIndicator(
                             color: ColorManager.orange,
                           ))
-                        : GridViewProduct(prodactData),
+                        : gridViewProduct(prodactData),
                     isLoadMore
                         ? Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -155,94 +146,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   bool get wantKeepAlive => true;
 
-  Widget AdvertiseView() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          SizedBox(
-            height: 200,
-            child: PageView.builder(
-              allowImplicitScrolling: true,
-              onPageChanged: onChangedPage,
-              itemCount: 5,
-              itemBuilder: (ctx, index) => Stack(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, Routes.salesDiscountScreenScreen);
-                    },
-                    child: Container(
-                      height: 200,
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            "assets/images/cover3.jpg",
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 30,
-                    top: 50,
-                    child: Column(
-                      children: [
-                        Container(
-                            color: Colors.black.withOpacity(0.5),
-                            child: Text(
-                              "New Year Sale !",
-                              style: getBoldStyle(
-                                  color: ColorManager.white,
-                                  fontSize: FontSize.s20),
-                            )),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          color: Colors.black.withOpacity(0.5),
-                          child: Text(
-                            "Up To 25% Off",
-                            style: getBoldStyle(
-                                color: ColorManager.white,
-                                fontSize: FontSize.s25),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        TimeCouuntDown()
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 5,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int i = 0; i < 5; i++) ...{
-                  if (i == advertisePageIndex)
-                    SlideDots(true)
-                  else
-                    SlideDots(false)
-                }
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget SearchBar() {
+  Widget searchBar() {
     return TextField(
       readOnly: true,
       cursorColor: ColorManager.cursorColor,
@@ -271,31 +175,31 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget Categories() {
+  Widget categories() {
     List<Map> categoryData = [
       {
         "name": "shoes",
-        "image": "assets/images/categoriesIcon/shoes.png",
+        "image": ImageAsset.shoesCategory,
       },
       {
         "name": "bags",
-        "image": "assets/images/categoriesIcon/handbag.png",
+        "image": ImageAsset.bagsCategory,
       },
       {
         "name": "clothes",
-        "image": "assets/images/categoriesIcon/clothes.png",
+        "image": ImageAsset.clothesCategory,
       },
       {
         "name": "eye glasses",
-        "image": "assets/images/categoriesIcon/sunglass.png",
+        "image": ImageAsset.eyeGlassesCategory,
       },
       {
-        "name": "jewelries",
-        "image": "assets/images/categoriesIcon/jewelry.png",
+        "name": "accessories",
+        "image": ImageAsset.accessoriesCategory,
       },
       {
-        "name": "makeups",
-        "image": "assets/images/categoriesIcon/makeup.png",
+        "name": "beauty",
+        "image": ImageAsset.beautyCategory,
       }
     ];
     return Column(
@@ -323,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget GridViewProduct(List<Product> productData) {
+  Widget gridViewProduct(List<Product> productData) {
     return GridView.builder(
       physics:
           const NeverScrollableScrollPhysics(), // to disable GridView's scrolling

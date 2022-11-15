@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:online_shopping/controller/advertise_controller.dart';
 import 'package:online_shopping/controller/auth_contoller.dart';
 import 'package:online_shopping/controller/cart_controller.dart';
 import 'package:online_shopping/controller/favouite_contoller.dart';
@@ -54,6 +55,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (ctx) => FilterProductController(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => AdvertiseContoller(),
         ),
       ],
       child: MaterialApp(
