@@ -74,6 +74,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // super.build(context);
     final isLogged = Provider.of<AuthController>(context).isLogged;
     return WillPopScope(
       onWillPop: () async {
@@ -85,7 +86,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
           future: _future,
           builder: (context, snapshot) {
             final product =
-                Provider.of<ProductContoller>(context, listen: true).product;
+                Provider.of<ProductContoller>(context, listen: false).product;
             return Scaffold(
               body: snapshot.connectionState == ConnectionState.waiting ||
                       isLoading
