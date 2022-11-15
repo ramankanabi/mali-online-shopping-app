@@ -69,6 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               controller: _searchController,
               onChanged: (val) => onChange(val.toString()),
+              cursorColor: ColorManager.cursorColor,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppRadius.r8),
