@@ -143,6 +143,7 @@ class AuthController with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
+      throw e;
     }
   }
 

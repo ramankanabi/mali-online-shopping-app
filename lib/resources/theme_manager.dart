@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 ThemeData getApplicationTheme() {
   return ThemeData(
+
       // main colors of the appte
       primaryColor: ColorManager.primary,
       primaryColorLight: ColorManager.primaryOpacity70,
@@ -31,17 +32,21 @@ ThemeData getApplicationTheme() {
       ),
       // Button theme
       buttonTheme: ButtonThemeData(
-          shape: StadiumBorder(),
-          disabledColor: ColorManager.grey1,
-          buttonColor: ColorManager.primary,
-          splashColor: ColorManager.primaryOpacity70),
+        shape: StadiumBorder(),
+        disabledColor: ColorManager.grey1,
+        buttonColor: ColorManager.primary,
+        splashColor: ColorManager.primaryOpacity70,
+      ),
 
       // elevated button theme
       elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-              textStyle: getRegularStyle(color: ColorManager.white),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSize.s12)))),
+        style: ElevatedButton.styleFrom(
+            textStyle: getRegularStyle(color: ColorManager.white),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppSize.s12),
+            ),
+            backgroundColor: ColorManager.primary),
+      ),
 
       // Text theme
       textTheme: TextTheme(

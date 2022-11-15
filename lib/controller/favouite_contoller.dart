@@ -71,27 +71,27 @@ class FavouriteContoller with ChangeNotifier {
   }
 
   Future getUserAllFavourites(String userId) async {
-    // try {
-    _iasLoaing = true;
-    final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
+    try {
+      _iasLoaing = true;
+      final url =
+          "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
 
-    final favs = await getDio().get(url, options: dioOptions);
-    if (favs.statusCode != 404) {
-      final extractedData = favs.data["data"]["data"] as List;
+      final favs = await getDio().get(url, options: dioOptions);
+      if (favs.statusCode != 404) {
+        final extractedData = favs.data["data"]["data"] as List;
 
-      _favItems = extractedData
-          .map((prodData) => Favourite.fromJson(prodData))
-          .toList();
+        _favItems = extractedData
+            .map((prodData) => Favourite.fromJson(prodData))
+            .toList();
+        _iasLoaing = false;
+        notifyListeners();
+      }
+
+      return favs;
+    } catch (er) {
       _iasLoaing = false;
       notifyListeners();
     }
-
-    return favs;
-    // } catch (er) {
-    //   _iasLoaing = false;
-    //   notifyListeners();
-    // }
   }
 
   resetItems() {
