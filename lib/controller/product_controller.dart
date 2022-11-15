@@ -10,7 +10,7 @@ class ProductContoller with ChangeNotifier {
   int _page = 1;
   int _categoryPage = 1;
   int _advertisePage = 1;
-  final int _limit = 10;
+  final int _limit = 20;
 
   List<Product> _items = [];
   List<Product> get items => _items;
