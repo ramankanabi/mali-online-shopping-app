@@ -21,7 +21,7 @@
 
 
    <application
-        android:label="online_shopping"
+        android:label="Mali Shopping"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
