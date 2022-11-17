@@ -67,77 +67,81 @@ class _CartItemState extends State<CartItem>
                             arguments: [cart.productId, isFav]);
                       },
                       child: Card(
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppPadding.p8),
-                          child: SizedBox(
-                              height: AppSize.s100,
-                              width: double.infinity,
+                          elevation: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppPadding.p8),
+                            child: SizedBox(
+                              height: AppSize.s150,
+                              width: MediaQuery.of(context).size.width,
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(children: [
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
                                     imageWidget(),
                                     const SizedBox(
                                       width: 10,
                                     ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          cart.productName,
-                                          style: getMediumStyle(
-                                              color: ColorManager.primary,
-                                              fontSize: FontSize.s20),
-                                        ),
-                                        const SizedBox(
-                                          height: 4,
-                                        ),
-                                        Text(
-                                          subTotal.toString(),
-                                          style: getMediumStyle(
-                                              color: ColorManager.orange,
-                                              fontSize: FontSize.s16),
-                                        ),
-                                        const SizedBox(
-                                          height: 4,
-                                        ),
-                                        Text(
-                                          cart.size,
-                                          style: getRegularStyle(
-                                              color: ColorManager.lightGrey,
-                                              fontSize: FontSize.s14),
-                                        ),
-                                      ],
+                                    Expanded(
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              cart.productName,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                              style: getMediumStyle(
+                                                  color: ColorManager.primary,
+                                                  fontSize: FontSize.s20),
+                                            ),
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
+                                            Text(
+                                              subTotal.toString(),
+                                              style: getMediumStyle(
+                                                  color: ColorManager.orange,
+                                                  fontSize: FontSize.s16),
+                                            ),
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
+                                            Text(
+                                              cart.size,
+                                              style: getRegularStyle(
+                                                  color: ColorManager.lightGrey,
+                                                  fontSize: FontSize.s14),
+                                            )
+                                          ]),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              removeProductFromCart(cart);
+                                            },
+                                            child: Icon(
+                                              CupertinoIcons.delete,
+                                              color: ColorManager.grey,
+                                              size: 22,
+                                            ),
+                                          ),
+                                          quantityWidget(),
+                                        ],
+                                      ),
                                     ),
                                   ]),
-                                  Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          removeProductFromCart(cart);
-                                        },
-                                        child: Icon(
-                                          CupertinoIcons.delete,
-                                          color: ColorManager.grey,
-                                          size: 20,
-                                        ),
-                                      ),
-                                      quantityWidget(),
-                                    ],
-                                  )
-                                ],
-                              )),
-                        ),
-                      ),
-                    );
+                            ),
+                          )));
             });
   }
 
@@ -179,7 +183,7 @@ class _CartItemState extends State<CartItem>
 
   void increaseQuantity() async {
     try {
-      if (quantity < 5) {
+      if (quantity < 11) {
         setState(() {
           isLoading = true;
           quantity++;
@@ -205,8 +209,8 @@ class _CartItemState extends State<CartItem>
       ),
       elevation: 3,
       child: Container(
-          width: AppSize.s80,
-          height: AppSize.s25,
+          width: AppSize.s90,
+          height: AppSize.s30,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.r20),
           ),
@@ -223,7 +227,7 @@ class _CartItemState extends State<CartItem>
                 child: Icon(
                   CupertinoIcons.minus,
                   color: ColorManager.grey,
-                  size: 20,
+                  size: 22,
                 ),
               ),
               const SizedBox(
@@ -256,7 +260,7 @@ class _CartItemState extends State<CartItem>
                 child: Icon(
                   CupertinoIcons.plus,
                   color: ColorManager.orange,
-                  size: 20,
+                  size: 22,
                 ),
               ),
             ],

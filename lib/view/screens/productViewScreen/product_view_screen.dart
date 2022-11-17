@@ -30,36 +30,35 @@ class ProductViewScreen extends StatefulWidget {
   State<ProductViewScreen> createState() => _ProductViewScreenState();
 }
 
-class _ProductViewScreenState extends State<ProductViewScreen> {
+class _ProductViewScreenState extends State<ProductViewScreen>
+    with AutomaticKeepAliveClientMixin {
   bool isInit = true;
   bool isLoading = false;
   int pageIndex = 0;
-  late Future _future;
   bool isFav = false;
   int productFavCount = 0;
+  Product? product;
 
   @override
   void initState() {
-    final isLogged =
-        Provider.of<AuthController>(context, listen: false).isLogged;
-    if (isLogged) {
-      toggleFavStatus();
-    } else {
-      isFav = false;
-    }
-    _future = Provider.of<ProductContoller>(context, listen: false)
-        .fetchOneProduct(widget.productId);
+    fetchData();
+
     super.initState();
   }
 
-  toggleFavStatus() async {
-    setState(() {
-      isLoading = true;
-    });
+  fetchData() async {
     try {
-      isFav = await FavouriteContoller()
-          .getFavourite(widget.productId, globalUserId);
+      isLoading = true;
 
+      final isLogged =
+          Provider.of<AuthController>(context, listen: false).isLogged;
+      product = await ProductContoller().fetchOneProduct(widget.productId);
+      if (isLogged) {
+        isFav = await FavouriteContoller()
+            .getFavourite(widget.productId, globalUserId);
+      } else {
+        isFav = false;
+      }
       setState(() {
         isLoading = false;
       });
@@ -74,106 +73,98 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
+    super.build(context);
     final isLogged = Provider.of<AuthController>(context).isLogged;
     return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, isFav);
+        onWillPop: () async {
+          Navigator.pop(context, isFav);
 
-        return false;
-      },
-      child: FutureBuilder(
-          future: _future,
-          builder: (context, snapshot) {
-            final product =
-                Provider.of<ProductContoller>(context, listen: false).product;
-            return Scaffold(
-              body: snapshot.connectionState == ConnectionState.waiting ||
-                      isLoading
-                  ? ProductViewPageLoader()
-                  : snapshot.hasData
-                      ? SafeArea(
-                          child: Padding(
-                          padding: const EdgeInsets.all(AppPadding.p8),
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return false;
+        },
+        child: Scaffold(
+          body: isLoading
+              ? ProductViewPageLoader()
+              : product != null
+                  ? SafeArea(
+                      child: Padding(
+                      padding: const EdgeInsets.all(AppPadding.p8),
+                      child: SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            imageCover(
+                              product!,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            namePriceFav(product!, isLogged),
+                            SizedBox(
+                              height: AppSize.s70,
+                              width: double.infinity,
+                              child: sizeView(
+                                product!,
+                              ),
+                            ),
+                            if (product!.relatedProduct!.isNotEmpty) ...{
+                              SizedBox(
+                                height: AppSize.s100,
+                                width: double.infinity,
+                                child: colorView(
+                                  product!,
+                                ),
+                              ),
+                            },
+                            SizedBox(
+                              height: 15,
+                            ),
+                            descriptionView(
+                              product!,
+                            ),
+                            SizedBox(
+                              height: 25,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                imageCover(
-                                  product,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                namePriceFav(product, isLogged),
-                                SizedBox(
-                                  height: AppSize.s70,
-                                  width: double.infinity,
-                                  child: sizeView(
-                                    product,
+                                Expanded(
+                                  child: Divider(
+                                    thickness: 1,
                                   ),
                                 ),
-                                if (product.relatedProduct!.isNotEmpty) ...{
-                                  SizedBox(
-                                    height: AppSize.s100,
-                                    width: double.infinity,
-                                    child: colorView(
-                                      product,
-                                    ),
+                                Text(
+                                  "   similar products   ",
+                                  style: getMediumStyle(
+                                    color: ColorManager.grey,
+                                    fontSize: FontSize.s16,
                                   ),
-                                },
-                                SizedBox(
-                                  height: 15,
                                 ),
-                                descriptionView(
-                                  product,
-                                ),
-                                SizedBox(
-                                  height: 25,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Divider(
-                                        thickness: 1,
-                                      ),
-                                    ),
-                                    Text(
-                                      "   similar products   ",
-                                      style: getMediumStyle(
-                                        color: ColorManager.grey,
-                                        fontSize: FontSize.s16,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Divider(
-                                        // height: 21,
-                                        thickness: 1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                SimilarProducts(
-                                  category: product.category!,
+                                Expanded(
+                                  child: Divider(
+                                    // height: 21,
+                                    thickness: 1,
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ))
-                      : somthingWrong(),
-              persistentFooterButtons: [
-                footer(product, isLogged),
-              ],
-            );
-          }),
-    );
+                            SizedBox(
+                              height: 15,
+                            ),
+                            SimilarProducts(
+                              category: product!.category!,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ))
+                  : somthingWrong(),
+          persistentFooterButtons: [
+            product != null ? footer(product!, isLogged) : Container(),
+          ],
+        ));
   }
 
   Widget namePriceFav(Product product, bool isLogged) {
@@ -554,6 +545,9 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class SimilarProducts extends StatefulWidget {

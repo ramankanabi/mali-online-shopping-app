@@ -26,7 +26,8 @@ class AdvertiseContoller with ChangeNotifier {
 
   Future getAllAdvertises() async {
     try {
-      const url = "https://gentle-crag-94785.herokuapp.com/api/v1/advertise/";
+      const url =
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/advertise/";
 
       final advs = await getDio().get(url, options: dioOptions);
       final extractedData = advs.data["data"] as List;

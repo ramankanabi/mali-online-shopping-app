@@ -34,7 +34,7 @@ class FavouriteContoller with ChangeNotifier {
   }
 
   Future<void> addToFavourite(String prodId, String userId) async {
-    const url = "https://gentle-crag-94785.herokuapp.com/api/v1/favourites";
+    const url = "https://mali-online-shoppingg.herokuapp.com/api/v1/favourites";
     try {
       await getDio().post(url,
           data: jsonEncode({
@@ -46,7 +46,7 @@ class FavouriteContoller with ChangeNotifier {
 
   Future<void> removeFavourite(String prodId, String userId) async {
     final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId/product/$prodId";
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/favourites/$userId/product/$prodId";
     try {
       await getDio().delete(
         url,
@@ -57,7 +57,7 @@ class FavouriteContoller with ChangeNotifier {
   Future<bool> getFavourite(String prodId, String userId) async {
     _isFav = false;
     final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId/product/$prodId";
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/favourites/$userId/product/$prodId";
     try {
       final fav = await getDio().get(url, options: dioOptions);
       if (fav.statusCode != 404) {
@@ -74,7 +74,7 @@ class FavouriteContoller with ChangeNotifier {
     try {
       _iasLoaing = true;
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/favourites/$userId";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/favourites/$userId";
 
       final favs = await getDio().get(url, options: dioOptions);
       if (favs.statusCode != 404) {

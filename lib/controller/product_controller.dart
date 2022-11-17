@@ -54,7 +54,7 @@ class ProductContoller with ChangeNotifier {
     try {
       _page = 1;
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit&sort=productName";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/products?page=$_page&limit=$_limit&sort=productName";
 
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = response.data["data"] as List;
@@ -66,16 +66,15 @@ class ProductContoller with ChangeNotifier {
     } catch (er) {}
   }
 
-  Future<Response?> fetchOneProduct(String prodId) async {
+  Future<Product?> fetchOneProduct(String prodId) async {
     final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/products/$prodId";
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/products/$prodId";
     try {
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = response.data["data"]["data"];
       _product = Product.fromJson(extractedData);
-      notifyListeners();
 
-      return response;
+      return _product;
     } catch (er) {}
     return null;
   }
@@ -84,7 +83,7 @@ class ProductContoller with ChangeNotifier {
     _advertisePage = 1;
     try {
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?priceDiscount[gt]=0&page=$_advertisePage&limit=$_limit";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/products?priceDiscount[gt]=0&page=$_advertisePage&limit=$_limit";
       final response = await getDio().get(url);
       final extractedData = response.data["data"] as List;
 
@@ -100,7 +99,7 @@ class ProductContoller with ChangeNotifier {
       _advertisePage = _advertisePage + 1;
 
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?priceDiscount[gt]=0&page=$_advertisePage&limit=$_limit";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/products?priceDiscount[gt]=0&page=$_advertisePage&limit=$_limit";
 
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = jsonDecode(response.data)["data"] as List;
@@ -117,7 +116,7 @@ class ProductContoller with ChangeNotifier {
     _categoryPage = 1;
     try {
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?$query&page=$_categoryPage&limit=$_limit";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/products?$query&page=$_categoryPage&limit=$_limit";
       final response = await getDio().get(url);
       final extractedData = response.data["data"] as List;
 
@@ -132,7 +131,7 @@ class ProductContoller with ChangeNotifier {
     try {
       _page++;
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?page=$_page&limit=$_limit&sort=productName";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/products?page=$_page&limit=$_limit&sort=productName";
 
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = response.data["data"] as List;
@@ -151,7 +150,7 @@ class ProductContoller with ChangeNotifier {
     try {
       _categoryPage = _categoryPage + 1;
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?$query&page=$_categoryPage&limit=$_limit";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/products?$query&page=$_categoryPage&limit=$_limit";
 
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = response.data["data"] as List;
@@ -170,7 +169,7 @@ class ProductContoller with ChangeNotifier {
     try {
       _page = 1;
       final url =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/products?category=$category&limit=10";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/products?category=$category&limit=10";
 
       final response = await getDio().get(url, options: dioOptions);
       final extractedData = response.data["data"] as List;

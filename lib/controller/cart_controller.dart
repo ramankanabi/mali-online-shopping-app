@@ -30,11 +30,11 @@ class CartController with ChangeNotifier {
     try {
       await getDio()
           .get(
-        "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId",
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/carts/$globalUserId",
       )
           .then((_) async {
         final url =
-            "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId";
+            "https://mali-online-shoppingg.herokuapp.com/api/v1/carts/$globalUserId";
         await getDio().patch(
           url,
           data: jsonEncode(
@@ -50,7 +50,8 @@ class CartController with ChangeNotifier {
         );
       }).catchError((err) async {
         if (err.toString().contains("404")) {
-          const url = "https://gentle-crag-94785.herokuapp.com/api/v1/carts";
+          const url =
+              "https://mali-online-shoppingg.herokuapp.com/api/v1/carts";
           await getDio().post(
             url,
             data: jsonEncode(
@@ -78,7 +79,8 @@ class CartController with ChangeNotifier {
   }
 
   Future<Response?> getCart(String userId) async {
-    final url = "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$userId";
+    final url =
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/carts/$userId";
 
     try {
       final cart = await getDio().get(
@@ -99,7 +101,7 @@ class CartController with ChangeNotifier {
 
   Future<void> updateQuantity(String objectId, int quantity) async {
     final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId/product/$objectId";
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/carts/$globalUserId/product/$objectId";
 
     await getDio().patch(
       url,
@@ -111,7 +113,7 @@ class CartController with ChangeNotifier {
 
   Future<void> removeProductFromCart(Cart cart) async {
     final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$globalUserId/product/${cart.objectId}";
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/carts/$globalUserId/product/${cart.objectId}";
     await getDio().delete(
       url,
     );

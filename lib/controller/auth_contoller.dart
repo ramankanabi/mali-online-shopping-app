@@ -39,7 +39,8 @@ class AuthController with ChangeNotifier {
   }
 
   Future<void> _createUser(User user, String token) async {
-    const url = "https://gentle-crag-94785.herokuapp.com/api/v1/user/signup";
+    const url =
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/user/signup";
 
     try {
       final userCreated = await getDio().post(url,
@@ -70,7 +71,8 @@ class AuthController with ChangeNotifier {
   Future<void> _login(String token, User user) async {
     try {
       if (isUserExist == true) {
-        const url = "https://gentle-crag-94785.herokuapp.com/api/v1/user/login";
+        const url =
+            "https://mali-online-shoppingg.herokuapp.com/api/v1/user/login";
         final loggedUser = await getDio().post(
           url,
           data: jsonEncode(
@@ -149,7 +151,7 @@ class AuthController with ChangeNotifier {
 
   Future<bool> checkUser(String phoneNumber) async {
     final user = await getDio().get(
-        "https://gentle-crag-94785.herokuapp.com/api/v1/user/phone/$phoneNumber");
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/user/phone/$phoneNumber");
 
     if (user.data["data"]["user"] == null) {
       isUserExist = false;

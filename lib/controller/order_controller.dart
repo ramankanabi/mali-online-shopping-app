@@ -50,9 +50,9 @@ class OrderController with ChangeNotifier {
     String location,
   ) async {
     try {
-      const url = "https://gentle-crag-94785.herokuapp.com/api/v1/orders";
+      const url = "https://mali-online-shoppingg.herokuapp.com/api/v1/orders";
       final cartUrl =
-          "https://gentle-crag-94785.herokuapp.com/api/v1/carts/$customerId";
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/carts/$customerId";
       final order = await getDio().post(url,
           data: jsonEncode({
             "customerId": customerId,
@@ -73,7 +73,7 @@ class OrderController with ChangeNotifier {
   Future getUserAllOrder(String customerId) async {
     _order.clear();
     final url =
-        "https://gentle-crag-94785.herokuapp.com/api/v1/orders/customer/$customerId";
+        "https://mali-online-shoppingg.herokuapp.com/api/v1/orders/customer/$customerId";
     final response = await getDio().get(url, options: dioOptions);
     final orderList = response.data["data"]["data"] as List;
 
