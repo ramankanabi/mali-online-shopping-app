@@ -112,11 +112,13 @@ class CartController with ChangeNotifier {
   }
 
   Future<void> removeProductFromCart(Cart cart) async {
-    final url =
-        "https://mali-online-shoppingg.herokuapp.com/api/v1/carts/$globalUserId/product/${cart.objectId}";
-    await getDio().delete(
-      url,
-    );
+    try {
+      final url =
+          "https://mali-online-shoppingg.herokuapp.com/api/v1/carts/$globalUserId/product/${cart.objectId}";
+      await getDio().delete(
+        url,
+      );
+    } catch (e) {}
   }
 
   Future resetItem() async {

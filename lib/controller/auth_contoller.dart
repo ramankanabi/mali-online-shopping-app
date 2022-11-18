@@ -57,6 +57,8 @@ class AuthController with ChangeNotifier {
           key: "userId", value: extractedData["data"]["user"]["_id"]);
       _userId = extractedData["data"]["user"]["_id"];
       _token = extractedData["token"];
+      globalToken = _token;
+      globalUserId = _userId;
       if (_token != null && _userId != null) {
         _isLogged = true;
       } else {

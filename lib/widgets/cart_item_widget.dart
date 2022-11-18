@@ -152,7 +152,6 @@ class _CartItemState extends State<CartItem>
       });
       await Provider.of<CartController>(context, listen: false)
           .removeProductFromCart(cart)
-          .then((value) {});
     } catch (er) {
       setState(() {
         isRemoved = false;
