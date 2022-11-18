@@ -1,7 +1,4 @@
 
-https://user-images.githubusercontent.com/49620659/202711488-6d36efe2-b872-451b-9705-5f3253bc6b82.mp4
-
-
 https://user-images.githubusercontent.com/49620659/202711499-8a4dc524-0cb4-4411-9419-915f3ac0f596.mp4
 
 
