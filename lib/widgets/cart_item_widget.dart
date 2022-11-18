@@ -151,7 +151,7 @@ class _CartItemState extends State<CartItem>
         isRemoved = true;
       });
       await Provider.of<CartController>(context, listen: false)
-          .removeProductFromCart(cart)
+          .removeProductFromCart(cart);
     } catch (er) {
       setState(() {
         isRemoved = false;
